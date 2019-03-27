@@ -1,7 +1,7 @@
 "use strict"
 
 
-function SetupAPIV1() {
+function SetupAPIV1(app) {
 
 }
 
