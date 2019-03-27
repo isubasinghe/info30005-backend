@@ -7,4 +7,4 @@ function SetupAPI(app) {
 }
 
 
-export default SetupAPI;
+module.exports = SetupAPI;

@@ -5,6 +5,8 @@ const email = require('../sendgrid');
 const mongoose = require('mongoose');
 const bcrypt = require('mongoose-bcrypt');
 
+const uuidv4 = require('uuid/v4');
+
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
@@ -13,7 +15,7 @@ const UserSchema = new Schema({
     password: {type:String, required: true, bcrypt: true},
     name: {type: String, required: true},
     address: {type: String, required: true},
-    verifykey: {type: String, required: true, index: true},
+    verifykey: {type: String, required: true, index: true, default: uuidv4, unique: true},
     verified: {type: Boolean, required: true, default: false},
     items: [{
         name: {type: String, index:true},

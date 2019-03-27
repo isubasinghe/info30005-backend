@@ -5,4 +5,4 @@ function SetupAPIV1(app) {
 
 }
 
-export default SetupAPIV1;
+module.exports = SetupAPIV1;

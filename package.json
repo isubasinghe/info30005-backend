@@ -13,6 +13,10 @@
     "express": "~4.16.0",
     "mongoose": "^5.4.19",
     "mongoose-bcrypt": "^1.6.0",
-    "morgan": "~1.9.0"
+    "morgan": "~1.9.0",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "mocha": "^6.0.2"
   }
 }
