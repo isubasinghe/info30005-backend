@@ -15,5 +15,6 @@ if (mongoose.connection.readyState === 0 || (mongoose.connection.readyState === 
     console.log("Failed to connect, exiting now");
     process.exit(1);
 }
+
 module.exports = conn;
 

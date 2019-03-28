@@ -4,3 +4,5 @@
 const _ = require('../mongodb');
 
 const users = require('./userSchema');
+
+module.exports = users;

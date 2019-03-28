@@ -1,28 +1,31 @@
 "use strict"
 
 const sgMail = require('@sendgrid/mail');
-sgMail.setApiKey(process.env.SENDGRID);
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+console.log(process.env.PORT);
+console.log(process.env.SENDGRID_API_KEY);
 
 
 let mailSettings = {
     from: "admin@isubasinghe.me",
     subject: "Account verification with foodspan",
-    textPre: "",
-    textPost: "",
+    textPre: "Click on " + process.env.HOST + "/verify/",
+    textPost: " to verify your account",
     htmlPre: "",
     htmlPost: ""
 }
 
 
-function email(options) {
+function email(email, key) {
     const msg = {
-        to: options.email,
+        to: email,
         from: mailSettings.from,
         subject: mailSettings.subject,
-        text: mailSettings.textPre + options.key + mailSettings.textPost,
-        html: mailSettings.htmlPre + options.key + mailSettings.htmlPost
+        text: mailSettings.textPre + key + mailSettings.textPost,
+        html: mailSettings.htmlPre + key + mailSettings.htmlPost
     }
-    sgMail.send(msg);
+    return sgMail.send(msg);
 }
 
 

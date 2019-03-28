@@ -44,7 +44,12 @@ UserSchema.plugin(bcrypt);
 
 UserSchema.pre('save', function(next){
     console.log("Sending email to " + this.get('email'));
-
+    email(this.get('email'), this.get('verifykey')).then(success => {
+        console.log(success);
+        next();
+    }).catch(err => {
+        next(err);
+    }); 
 });
 
 module.exports = mongoose.model("Users", UserSchema);
