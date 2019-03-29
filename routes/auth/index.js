@@ -1,13 +1,12 @@
 "use strict"
 
+const expresss = require('express');
+const router = expresss.Router();
 
-function setupAuth(app) {
-    app.post("/signup", require('./signup'));
-    app.post('/signin', require('./signin'));
-    app.post('/verify', require('./verify'));
-    app.post('/reset', require('./reset'));
-    app.post('/logout', require('./logout'));
+router.post('/signup', require('./signup'));
+router.post('/signin', require('./signin'));
+router.get('/verify/:key', require('./verify'));
+router.post('/reset', require('./reset'));
+router.get('/logout', require('./logout'));
 
-}
-
-module.exports = setupAuth;
+module.exports = router;

@@ -18,12 +18,12 @@ var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 
-// For local dev only, please remove in prod
-app.locals.db.users.deleteMany({}).then(result => {
+// // For local dev only, please remove in prod
+// app.locals.db.users.deleteMany({}).then(result => {
 
-}).catch(err => {
+// }).catch(err => {
 
-});
+// });
 
 
 /**

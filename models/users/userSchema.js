@@ -15,6 +15,7 @@ const UserSchema = new Schema({
     password: {type:String, required: true, bcrypt: true},
     name: {type: String, required: true},
     address: {type: String, required: true},
+    rating: {type: Number, required: true, default: 5.0},
     verifykey: {type: String, required: true, index: true, default: uuidv4, unique: true},
     verified: {type: Boolean, required: true, default: false},
     items: [{

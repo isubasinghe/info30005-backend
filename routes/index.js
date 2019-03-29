@@ -1,11 +1,11 @@
 "use strict"
+const express = require('express');
+const router = express.Router();
 
-const setupAuth = require('./auth');
-const setupAPI = require('./api');
+const authRoutes = require('./auth');
+const apiRoutes = require('./api');
 
-function SetupRoutes(app) {
-    setupAuth(app);
-    setupAPI(app);
-}
+router.use('/auth', authRoutes);
+router.use('/api', apiRoutes);
 
-module.exports = SetupRoutes;
+module.exports = router;

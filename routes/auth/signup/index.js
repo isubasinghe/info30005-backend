@@ -19,17 +19,18 @@ function getErrorMsg(err) {
     return errMsg;
 }
 
-async function signUp(request, response) {
+function signUp(request, response) {
     
     const {email, password, name, address} = request.body;
-    try {
-        let doc = await request.app.locals.db.users.create({email: email, password: password, name: name, address: address});
-        if(doc) {
+    request.app.locals.db.users.create({email: email, password: password, name: name, address: address}).then(user => {
+        if(user === null) {
+            throw new Error("Could not create user");
+        }else {
             response.json(successMsg);
         }
-    }catch(err) {
+    }).catch(err => {   
         response.json(errMsg);
-    }
+    });
 }
 
 
