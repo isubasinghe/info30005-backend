@@ -17,6 +17,7 @@
     "express": "~4.16.0",
     "express-session": "^1.15.6",
     "jsonwebtoken": "^8.5.1",
+    "mongoolia": "^1.0.3",
     "mongoose": "^5.4.19",
     "mongoose-bcrypt": "^1.6.0",
     "morgan": "~1.9.0",
