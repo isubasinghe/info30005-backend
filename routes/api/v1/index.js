@@ -1,8 +1,6 @@
 "use strict"
 
+const express = require('express')
+const router = express.Router();
 
-function SetupAPIV1() {
-
-}
-
-export default SetupAPIV1;
+module.exports = router;

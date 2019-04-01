@@ -1,9 +1,10 @@
 "use strict"
 
+const express = require('express');
+const router = express.Router();
 
-function SetupAPI(app) {
+const v1Routes = require('./v1');
 
-}
+router.use("/v1", v1Routes);
 
-
-export default SetupAPI;
+module.exports = router;
