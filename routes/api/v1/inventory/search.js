@@ -1,24 +1,18 @@
-const algoliasearch = require('algoliasearch');
-const client = algoliasearch(process.env.ALGOLIA_API_KEY, process.env.ALGOLIA_APP_ID);
+var mongoose = require('mongoose');
+mongoose.set('useCreateIndex', true);
+var User = mongoose.model('Users');
 
-
-const index = client.initIndex('search');
-
-function search(req, res) {
-    index.addObjects(request.app.locals.db.users, function(err, content){
-        if (err){
-            console.error(err);
+var search = function(req, res) {
+    var searchParameter = req.body.itemName;
+    User.find({items: {name: req.body.itemName}}, function(err, users){
+        if(!err){
+            res.send(users);
+        }else{
+            res.sendStatus(404);
         }
     });
-    index.setSettings({
-        // Select the attributes you want to search in
-        searchableAttributes: [
-          'items', 'location'
-        ]}, function(err, content){
-            console.log(content);
-      });
 };
 
 
 
-module.exports = search;
+module.exports.search = search;
