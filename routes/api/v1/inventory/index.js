@@ -1,9 +1,13 @@
 const express = require('express');
 const router = express.Router();
-var controller = require('./search.js');
+const searchController = require('./search.js');
+const itemController = require('./items.js');
 
-router.post('/search', controller.search);
+router.post('/search', searchController.search);
 
+router.post('/addItem', itemController.addItem);
+
+router.post('/removeItem', itemController.removeItem);
 
 
 module.exports = router;

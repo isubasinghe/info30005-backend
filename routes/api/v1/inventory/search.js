@@ -1,9 +1,9 @@
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 mongoose.set('useCreateIndex', true);
-var User = mongoose.model('Users');
+const User = mongoose.model('Users');
 
-var search = function(req, res) {
-    var queryConditions = {}
+let search = function(req, res) {
+    let queryConditions = {}
     if(req.body.itemName){
         queryConditions.name = req.body.itemName;
     }

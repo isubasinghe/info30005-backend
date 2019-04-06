@@ -29,7 +29,7 @@ function signUp(request, response) {
             response.json(successMsg);
         }
     }).catch(err => {   
-        response.json(errMsg);
+        response.json(getErrorMsg(err));
     });
 }
 
