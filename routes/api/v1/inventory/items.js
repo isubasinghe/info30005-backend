@@ -14,11 +14,14 @@ let removeSuccessMsg = {
 let addItem = function(req, res) {
     User.findOneAndUpdate({email: req.body.email},{$push: {items: req.body.item}}).then(user => {
         if(user === null) {
+            console.log("Couldnt find user");
             throw new Error("Could not find user");
         }else {
+            console.log("Added item");
             res.send(addSuccessMsg);
         }
-    }).catch(err => {   
+    }).catch(err => {
+        console.log(err);   
         res.send(err);
     });
 };

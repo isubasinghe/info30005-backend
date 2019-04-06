@@ -20,7 +20,7 @@ let search = function(req, res) {
     if(req.body.location){
         // Can use this for equality 
         // User.find({items: {$elemMatch: {location: req.body.location}}}, function(err, user){
-        User.find({"items.location.coordinates": {$near: {$geometry: req.body.location}}}, function(err, user){
+        User.find({"items.location.coordinates": {$near: {$geometry: req.body.location}}}, 'items', function(err, user){
             if(err){
                 console.log(err);
                 res.sendStatus(404);
