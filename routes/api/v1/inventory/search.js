@@ -2,22 +2,36 @@ const mongoose = require('mongoose');
 mongoose.set('useCreateIndex', true);
 const User = mongoose.model('Users');
 
+
+
+
 let search = function(req, res) {
     let queryConditions = {}
-    if(req.body.itemName){
-        queryConditions.name = req.body.itemName;
+    if(req.body.name){
+        queryConditions.name = req.body.name;
+        User.find({items: {$elemMatch: queryConditions}}, function(err, user){
+            if(!err){
+                res.send(user);
+            }else{
+                res.sendStatus(404);
+            }
+        }).limit(10);
     }
     if(req.body.location){
-        queryConditions.location = req.body.location;
+        // Can use this for equality 
+        // User.find({items: {$elemMatch: {location: req.body.location}}}, function(err, user){
+        User.find({items: {$near: {$geometry: req.body.location}}}, function(err, user){
+            if(err){
+                console.log(err);
+                res.sendStatus(404);
+            }
+            else{
+                console.log("searchign");
+                res.send(user);
+            }
+        });
+        
     }
-    User.find({items: queryConditions}, function(err, users){
-        if(!err){
-            console.log(users)
-            res.send(users);
-        }else{
-            res.sendStatus(404);
-        }
-    });
 };
 
 

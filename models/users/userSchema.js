@@ -33,13 +33,13 @@ const UserSchema = new Schema({
             },
             coordinates: {
                 type: [Number],
-                required: true, 
-                index: true
+                required: true
             }
         },
         expiry: {type: Date, required: true, index: true}
     }]
 });
+UserSchema.index({items: {location: '2dsphere'}});
 
 UserSchema.plugin(bcrypt);
 
