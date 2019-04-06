@@ -35,7 +35,7 @@ const UserSchema = new Schema({
                 type: [Number],
                 required: true,
                 index: '2dsphere'
-            }
+            },
         },
         expiry: {type: Date, required: true, index: true}
     }]
