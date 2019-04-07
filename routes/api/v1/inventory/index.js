@@ -9,5 +9,6 @@ router.post('/addItem', itemController.addItem);
 
 router.post('/removeItem', itemController.removeItem);
 
+router.post('/listAllItems', itemController.listAllItems);
 
 module.exports = router;

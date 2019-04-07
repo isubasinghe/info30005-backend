@@ -11,6 +11,19 @@ let removeSuccessMsg = {
     msg: "Removed item from inventory"
 };
 
+let listAllItems = function(req,res){
+    User.find({email: req.body.email}, "items").then(items =>{
+        if(items === null){
+            throw new Error("Could not find items");
+        }
+        else{
+            res.send(items);
+        }
+    }).catch(err =>{
+        res.send(err);
+    })
+}
+
 let addItem = function(req, res) {
     User.findOneAndUpdate({email: req.body.email},{$push: {items: req.body.item}}).then(user => {
         if(user === null) {
@@ -40,3 +53,4 @@ let removeItem = function(req, res) {
 
 module.exports.addItem = addItem;
 module.exports.removeItem = removeItem;
+module.exports.listAllItems = listAllItems;
