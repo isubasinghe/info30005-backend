@@ -8,12 +8,13 @@ function signIn(request, response) {
         if( user.verified ) {
             user.verifyPassword(request.body.password, function(err, valid) {
                 if(err) {
-                    console.log(err);
+                    throw new Error("Internal Server Error");
                 }else {
                     if(valid) {
-                        response.end();
+                        let token = request.app.locals.jwt.create(user.email, '12h');
+                        response.json({token: token});
                     }else {
-                        console.log(valid);
+                        throw new Error("Wrong password or email");
                     }
                 }
             });
@@ -22,7 +23,7 @@ function signIn(request, response) {
         }
     })
     .catch(err => {
-        console.log(err);
+        response.status(400).json({msg: "Wrong password or email"});
     });
 }
 
