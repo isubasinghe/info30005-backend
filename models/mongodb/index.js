@@ -10,11 +10,11 @@ function createConnectionString() {
 }
 
 mongoose.connect(createConnectionString(), {useNewUrlParser: true}).then(conn => {
-
+    module.exports = conn;
 }).catch(err => {
     console.log(err);
     process.exit(-1);
 })
 
-module.exports = conn;
+
 
