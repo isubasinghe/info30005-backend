@@ -11,4 +11,6 @@ router.post('/removeItem', itemController.removeItem);
 
 router.post('/listAllItems', itemController.listAllItems);
 
+router.post('/getRecipes', itemController.getRecipes);
+
 module.exports = router;
