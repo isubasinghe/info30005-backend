@@ -12,6 +12,7 @@ let successMsg = {
 // TODO get the correct error message,
 // for now just return a generic 400
 function getErrorMsg(err) {
+    console.log(err);
     let errMsg = {
         status: 400,
         msg: "Could not write to db"
@@ -29,7 +30,7 @@ function signUp(request, response) {
             response.json(successMsg);
         }
     }).catch(err => {   
-        response.json(errMsg);
+        response.json(getErrorMsg(err));
     });
 }
 
