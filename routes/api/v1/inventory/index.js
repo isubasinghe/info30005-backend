@@ -1,16 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const searchController = require('./search.js');
-const itemController = require('./items.js');
+const search = require('./search.js');
+const listItem = require('./items.js');
+const addItem = require('./add.js');
+const removeItem = require('./remove.js');
 
-router.post('/search', searchController.search);
+router.post('/search', search.search);
 
-router.post('/addItem', itemController.addItem);
+router.post('/addItem', addItem.add);
 
-router.post('/removeItem', itemController.removeItem);
+router.post('/removeItem', removeItem.remove);
 
-router.post('/listAllItems', itemController.listAllItems);
+router.post('/listAllItems', listItem.listAllItems);
 
-router.post('/getRecipes', itemController.getRecipes);
 
 module.exports = router;
