@@ -8,15 +8,21 @@ let removeSuccessMsg = {
 };
 
 let remove = function(req, res) {
-    User.findOneAndUpdate({email: req.body.email},{$pull: {items: req.body.item}}).then(user => {
-        if(user === null) {
-            throw new Error("Could not find user");
-        }else {
-            res.send(removeSuccessMsg);
-        }
-    }).catch(err => {   
-        res.send(err);
-    });
+    let email = req.body.locals.jwt.verify(req.body.token);
+    if (email === null){
+        throw new Error("Could not find requested email");
+    }
+    else{
+        User.findOneAndUpdate({email: email},{$pull: {items: req.body.item}}).then(user => {
+            if(user === null) {
+                throw new Error("Could not find user");
+            }else {
+                res.send(removeSuccessMsg);
+            }
+        }).catch(err => {   
+            res.send(err);
+        });
+    }
 };
 
 module.exports.remove = remove;

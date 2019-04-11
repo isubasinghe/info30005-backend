@@ -3,3 +3,5 @@ const router = express.Router();
 const recipe = require('./generate.js')
 
 router.post('/generate', recipe.generate);
+
+module.exports = router;
