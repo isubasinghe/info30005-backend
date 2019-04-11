@@ -16,6 +16,7 @@
     "email-validator": "^2.0.4",
     "express": "~4.16.0",
     "express-session": "^1.15.6",
+    "greenlock-express": "2.x",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.4.19",
     "mongoose-bcrypt": "^1.6.0",
