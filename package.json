@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "nodemon ./bin/www",
     "start": "node ./bin/www",
-    "prod": "pm2 start ./bin/www"
+    "prod": "node ./node_modules/.bin/pm2-runtime start ./bin/www -i 2"
   },
   "dependencies": {
     "@sendgrid/mail": "^6.3.1",
@@ -17,6 +17,7 @@
     "email-validator": "^2.0.4",
     "express": "~4.16.0",
     "express-session": "^1.15.6",
+    "greenlock-express": "2.x",
     "jsonwebtoken": "^8.5.1",
     "mongoolia": "^1.0.3",
     "mongoose": "^5.4.19",
