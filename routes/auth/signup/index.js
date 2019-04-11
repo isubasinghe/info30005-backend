@@ -12,6 +12,7 @@ let successMsg = {
 // TODO get the correct error message,
 // for now just return a generic 400
 function getErrorMsg(err) {
+    console.log(err);
     let errMsg = {
         status: 400,
         msg: "Could not write to db"
