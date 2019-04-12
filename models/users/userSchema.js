@@ -42,8 +42,13 @@ const UserSchema = new Schema({
 });
 
 
+// On an insert/update to the password field, 
+// ensure that we run it through some rounds of bcrypt encryption.
+
 UserSchema.plugin(bcrypt);
 
+// Notify the user to verify their email whenever
+// a new User is about to be created.
 UserSchema.pre('save', function(next){
     console.log("Sending email to " + this.get('email'));
     email(this.get('email'), this.get('verifykey')).then(success => {
