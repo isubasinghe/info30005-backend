@@ -5,6 +5,8 @@ const listItem = require('./items.js');
 const addItem = require('./add.js');
 const removeItem = require('./remove.js');
 
+
+//The routes for the inventory functionalities
 router.post('/search', search.search);
 
 router.post('/addItem', addItem.add);
