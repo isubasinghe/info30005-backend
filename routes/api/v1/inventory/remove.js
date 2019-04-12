@@ -8,7 +8,7 @@ let removeSuccessMsg = {
 };
 
 let remove = function(req, res) {
-    let email = req.body.locals.jwt.verify(req.body.token);
+    let email = req.app.locals.jwt.verify(req.body.token);
     if (email === null){
         throw new Error("Could not find requested email");
     }
