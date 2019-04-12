@@ -33,16 +33,18 @@ const UserSchema = new Schema({
             },
             coordinates: {
                 type: [Number],
-                required: true, 
-                index: true
-            }
+                required: true,
+                index: '2dsphere'
+            },
         },
         expiry: {type: Date, required: true, index: true}
     }]
 });
 
+
 // On an insert/update to the password field, 
 // ensure that we run it through some rounds of bcrypt encryption.
+
 UserSchema.plugin(bcrypt);
 
 // Notify the user to verify their email whenever
