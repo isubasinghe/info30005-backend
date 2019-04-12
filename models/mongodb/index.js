@@ -3,13 +3,9 @@ const mongoose = require('mongoose');
 
 
 
-
-function createConnectionString() {
-    let connString = process.env.MONGO_URL;//"mongodb://192.168.99.100/foodspan";
-    return connString;
-}
-
-mongoose.connect(createConnectionString(), {useNewUrlParser: true}).then(conn => {
+// Connect to the mongodb database and then export, otherwise log
+// an error and exit
+mongoose.connect(process.env.MONGO_URL, {useNewUrlParser: true}).then(conn => {
     module.exports = conn;
 }).catch(err => {
     console.log(err);

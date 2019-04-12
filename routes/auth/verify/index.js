@@ -1,6 +1,8 @@
 "use strict"
 
-
+// After the link to confirm a signup is sent to the 
+// user and it is clicked, we set the verified status 
+// of that user to true
 function verify(request, response) {
     console.log(request.params.key);
     request.app.locals.db.users.findOneAndUpdate(

@@ -2,10 +2,18 @@
 const jwt = require('jsonwebtoken');
 const key = require('./key');
 
+
+// Verify a signed JWT token and return the email on success
 function verify(token) {
-    return jwt.verify(token, key).user;
+    try {
+        return jwt.verify(token, key).user;
+    } catch(err) {
+        console.log(err);
+        return null;
+    }
 }
 
+// Create a JWT payload signed with our secret key
 function create(user, maxAge) {
     let token = jwt.sign({user: user},
     key,
