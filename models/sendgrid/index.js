@@ -2,6 +2,12 @@
 
 const sgMail = require('@sendgrid/mail');
 
+
+
+// WHAT THE ACTUAL HELL, THIS WASNT NEEDED WHEN WE 
+// TESTED THE ENDPOINT, THIS IS MEANT TO BE AUTOMITICALLY LOADED
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
 let mailSettings = {
     from: "admin@isubasinghe.me",
     subject: "Account verification with foodspan",
