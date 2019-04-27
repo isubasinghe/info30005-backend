@@ -13,7 +13,7 @@ let mailSettings = {
     subject: "Account verification with foodspan",
     textPre: "Click on " + process.env.HOST + "/verify/",
     textPost: " to verify your account",
-    htmlPre: "Click on " + process.env.HOST + "/verify",
+    htmlPre: "Click on " + process.env.HOST + "/verify/",
     htmlPost: " to verify your account"
 }
 
