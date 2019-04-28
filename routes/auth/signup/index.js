@@ -9,14 +9,22 @@ let successMsg = {
 };
 
 
-// TODO get the correct error message,
-// for now just return a generic 400
+// Sends the approapriate error message
 function getErrorMsg(err) {
     console.log(err);
-    let errMsg = {
-        status: 400,
-        msg: "Could not write to db"
-    };
+    let errMsg;
+    if(err.code === 11000){
+        errMsg = {
+            status: 401,
+            msg: "An account with this email already exists"
+        };
+    }
+    else{
+        errMsg = {
+            status: 400,
+            msg: "Could not write to db"
+        };
+    }
     return errMsg;
 }
 
