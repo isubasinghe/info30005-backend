@@ -1,6 +1,24 @@
 "use strict"
 
+// When the incorrect username or password is entered
+function incorrectLogin(response){
+    try{
+        throw new Error("Wrong password or email")
+    }
+    catch{
+        response.status(400).json({msg: "Wrong password or email"});
+    }
+}
 
+// When an unverified user tries to login
+function unverifiedUser(response){
+    try{
+        throw new Error("Unverified User")
+    }
+    catch{
+        response.status(400).json({msg: "Unverified User"});
+    }
+}
 
 function signIn(request, response) {
 
@@ -14,16 +32,16 @@ function signIn(request, response) {
                         let token = request.app.locals.jwt.create(user.email, '12h');
                         response.json({token: token});
                     }else {
-                        throw new Error("Wrong password or email");
+                        incorrectLogin(response);
                     }
                 }
             });
         }else {
-            throw new Error("Unverified User");
+            unverifiedUser(response);
         }
     })
     .catch(err => {
-        response.status(400).json({msg: "Wrong password or email"});
+        response.status(400).json({msg: "Signin Failed: Please check your details"});
     });
 }
 
