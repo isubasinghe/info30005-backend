@@ -49,7 +49,7 @@ UserSchema.plugin(bcrypt);
 
 // Notify the user to verify their email whenever
 // a new User is about to be created.
-UserSchema.pre('save', function(next){
+UserSchema.post('save', function(doc, next){
     console.log("Sending email to " + this.get('email'));
     email(this.get('email'), this.get('verifykey')).then(success => {
         console.log(success);
