@@ -33,14 +33,16 @@ const UserSchema = new Schema({
             },
             coordinates: {
                 type: [Number],
-                required: true,
-                index: '2dsphere'
+                required: true
             },
         },
+        quantity: {type: Number, required: true},
+        units: {type: Number, required: true, default: 1},
         expiry: {type: Date, required: true, index: true}
     }]
 });
 
+UserSchema.index({"items.location": "2dsphere" });
 
 // On an insert/update to the password field, 
 // ensure that we run it through some rounds of bcrypt encryption.
