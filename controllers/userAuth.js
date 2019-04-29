@@ -40,8 +40,19 @@ function unverifiedUser(response){
         response.status(400).json({msg: "Unverified User"});
     }
 }
-
+// When an invalid email is entered
+function invalidEmail(response){
+    try{
+        throw new Error("Invalid email")
+    }
+    catch{
+        response.status(400).json({msg: "Invalid email"});
+    }
+}
 function signIn(request, response) {
+    if (!emailValidate.validate(req.body.email)){
+        invalidEmail(response);
+    }
 
     request.app.locals.db.users.findOne({email: request.body.email}).then(user => {
         if( user.verified ) {
@@ -90,6 +101,10 @@ function getErrorMsg(err) {
 function signUp(request, response) {
     
     const {email, password, name, address} = request.body;
+    if (!emailValidate.validate(req.body.email)){
+        invalidEmail(response);
+    }
+    name = req.body.name.replace(/^\s+|\s+$/g,'');
     request.app.locals.db.users.create({email: email, password: password, name: name, address: address}).then(user => {
         if(user === null) {
             throw new Error("Could not create user");
