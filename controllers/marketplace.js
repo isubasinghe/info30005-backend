@@ -2,9 +2,6 @@ const mongoose = require('mongoose');
 mongoose.set('useCreateIndex', true);
 const User = mongoose.model('Users');
 
-
-
-
 let search = function(req, res) {
     //Searches all the users based on optional parameters on the items location or name
     let queryConditions = {}
