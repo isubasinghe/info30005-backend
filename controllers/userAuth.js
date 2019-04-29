@@ -50,9 +50,9 @@ function invalidEmail(response){
     }
 }
 function signIn(request, response) {
-    if (!emailValidate.validate(req.body.email)){
-        invalidEmail(response);
-    }
+    // if (!emailValidate.validate(request.body.email)){
+    //     invalidEmail(response);
+    // }
 
     request.app.locals.db.users.findOne({email: request.body.email}).then(user => {
         if( user.verified ) {
