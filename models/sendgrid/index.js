@@ -11,9 +11,9 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 let mailSettings = {
     from: "admin@isubasinghe.me",
     subject: "Account verification with foodspan",
-    textPre: "Click on " + process.env.HOST + "/auth/verify/",
+    textPre: "Click on " + process.env.HOST + "/verify/",
     textPost: " to verify your account",
-    htmlPre: "Click on " + process.env.HOST + "/auth/verify/",
+    htmlPre: "Click on " + process.env.HOST + "/verify/",
     htmlPost: " to verify your account"
 }
 

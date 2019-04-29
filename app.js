@@ -33,5 +33,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(routes);
 
+// Server all other routes with the react page, this is needed
+// because React frontend is a SPA.
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname,'./public/index.html'));
+});
+
 
 module.exports = app;
