@@ -98,40 +98,54 @@ function getErrorMsg(err) {
 }
 
 function checkMandatoryFields(request, response){
-    if (!emailValidate.validate(req.body.email)){
+    let validFields = true;
+    if(Object.keys(request.body).length === 0){
+        validFields = false;
+        response.status(400).json({msg: "Invalid entry for fields"});
+        return validFields;
+    }
+    if (!request.body.email|| !emailValidate.validate(request.body.email)){
+        validFields = false;
         invalidEmail(response);
     }
-    if (req.body.name === "" || !/^[a-z]+$/i.test(req.body.name)){
+    if (!request.body.name || !/^[a-z]+$/i.test(request.body.name)){
+        validFields = false;
         response.status(400).json({msg: "Invalid field for name"});
     }
     // potentially add geocoding to validatew
-    if (req.body.address === ""){
+    if (!request.body.address || request.body.address === ""){
+        validFields = false;
         response.status(400).json({msg: "Invalid field for address"});
     }
+    if (!request.body.password || !/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/.test(request.body.password)){
+        validFields = false;
+        response.status(400).json({msg: "Invalid field for password"});
+    }
+    return validFields;
 }
 
 function signUp(request, response) {
     
     const {email, password, name, address} = request.body;
-    if (!emailValidate.validate(request.body.email)){
-        invalidEmail(response);
+    if (checkMandatoryFields(request, response)){
+        request.app.locals.db.users.create({email: email, password: password, name: name, address: address}).then(user => {
+            if(user === null) {
+                throw new Error("Could not create user");
+            }else {
+                response.json(successMsg);
+            }
+        }).catch(err => {   
+            response.json(getErrorMsg(err));
+        });
     }
-    request.app.locals.db.users.create({email: email, password: password, name: name, address: address}).then(user => {
-        if(user === null) {
-            throw new Error("Could not create user");
-        }else {
-            response.json(successMsg);
-        }
-    }).catch(err => {   
-        response.json(getErrorMsg(err));
-    });
 }
 // After the link to confirm a signup is sent to the 
 // user and it is clicked, we set the verified status 
 // of that user to true
 function verify(request, response) {
     console.log(request.params.key);
-    request.app.locals.db.users.findOneAndUpdate(
+    if(request.params.key && (request.params.key.length > 0)){
+        request.app.locals.db.users.findOneAndUpdate(
         {verifykey: request.params.key},
         {verified: true},
         {new: false, upsert: false, sort: false, runValidators: true}
@@ -144,6 +158,7 @@ function verify(request, response) {
         }).catch(err => {
             response.json({msg: "Unable to verify user"});
         });
+    }
 }
 
 
