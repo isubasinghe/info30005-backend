@@ -30,7 +30,7 @@ let search = function(req, res) {
         }
     }
     //Finds objects which are of a particular name
-    if(req.body.name){
+    if(req.body.name && req.body.name.length > 0){
         queryConditions.items = {$elemMatch: {name: req.body.name}};
     }
     User.find(queryConditions,'items', function(err, item){

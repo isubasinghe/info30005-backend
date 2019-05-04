@@ -2,12 +2,13 @@ const mongoose = require('mongoose');
 mongoose.set('useCreateIndex', true);
 const User = mongoose.model('Users');
 const axios = require('axios');
+var emailValidate = require('email-validator');
 
 let generate = function(req, res){
     let ingredients = "";
     //Checks if the email matches a valid token, which signifies a verified login session
     let email = req.app.locals.jwt.verify(req.body.token);
-    if (email == null){
+    if (email == null || !emailValidate.validate(email)){
         throw new Error("Could not find requested email")
     }
     else{
