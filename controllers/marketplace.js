@@ -1,43 +1,30 @@
 const mongoose = require('mongoose');
 mongoose.set('useCreateIndex', true);
 const User = mongoose.model('Users');
+const validator = require('./validate.js');
 
-function locationValidation(req, res){
-    let isValid = false;
-    let lon = req.body.location[0];
-    let lat = req.body.location[1];
-    if (typeof lon === 'number' && typeof lat === 'number'){
-        console.log("is num");
-        if (lon >=-180 && lon<=180 && lat>=-90 && lat<=90){
-            console.log("isvalid");
-            isValid = true;
-        }
-    }
-    return isValid
-}
-
-let search = function(req, res) {
+let search = function(request, response) {
     //Searches all the users based on optional parameters on the items location or name
     let queryConditions = {}
     //Finds items nearby a particular location
-    if(req.body.location){
-        if(locationValidation(req,res)){
-            queryConditions= {"items.location": {$near: {$geometry:{type: "Point", coordinates: req.body.location}}}};
+    if(request.body.location){
+        if(validator.locationValidation(request,response)){
+            queryConditions= {"items.location": {$near: {$geometry:{type: "Point", coordinates: request.body.location}}}};
         }
         else{
-            res.status(400).json({msg: "Invalid location coordinates"});
+            response.status(400).json({msg: "Invalid location coordinates"});
             return;
         }
     }
     //Finds objects which are of a particular name
-    if(req.body.name && req.body.name.length > 0){
-        queryConditions.items = {$elemMatch: {name: req.body.name}};
+    if(request.body.name && request.body.name.length > 0){
+        queryConditions.items = {$elemMatch: {name: request.body.name}};
     }
     User.find(queryConditions,'items', function(err, item){
         if(!err){
-            res.send(item);
+            response.send(item);
         }else{
-            res.send(err);
+            response.send(err);
             //res.sendStatus(404);
         }
     }).limit(10);

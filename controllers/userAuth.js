@@ -1,7 +1,7 @@
 "use strict"
 
+var validator = require('./validate.js');
 var emailValidate = require('email-validator');
-
 let successMsg = {
     status: 200,
     msg: "Writen to db, activate account by checking your email"
@@ -39,18 +39,9 @@ function unverifiedUser(response){
         response.status(400).json({msg: "Unverified User"});
     }
 }
-// When an invalid email is entered
-function invalidEmail(response){
-    try{
-        throw new Error("Invalid email")
-    }
-    catch{
-        response.status(400).json({msg: "Invalid email"});
-    }
-}
 function signIn(request, response) {
-    if (!emailValidate.validate(request.body.email)){
-        invalidEmail(response);
+    if(!emailValidate.validate(request.body.email)){
+        validator.invalidEmail(response);
     }
 
     request.app.locals.db.users.findOne({email: request.body.email}).then(user => {
@@ -97,37 +88,9 @@ function getErrorMsg(err) {
     return errMsg;
 }
 
-function checkMandatoryFields(request, response){
-    let validFields = true;
-    if(Object.keys(request.body).length === 0){
-        validFields = false;
-        response.status(400).json({msg: "Invalid entry for fields"});
-        return validFields;
-    }
-    if (!request.body.email|| !emailValidate.validate(request.body.email)){
-        validFields = false;
-        invalidEmail(response);
-    }
-    if (!request.body.name || !/^[a-z]+$/i.test(request.body.name)){
-        validFields = false;
-        response.status(400).json({msg: "Invalid field for name"});
-    }
-    // potentially add geocoding to validatew
-    if (!request.body.address || request.body.address === ""){
-        validFields = false;
-        response.status(400).json({msg: "Invalid field for address"});
-    }
-    if (!request.body.password || !/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/.test(request.body.password)){
-        validFields = false;
-        response.status(400).json({msg: "Invalid field for password"});
-    }
-    return validFields;
-}
-
 function signUp(request, response) {
-    
     const {email, password, name, address} = request.body;
-    if (checkMandatoryFields(request, response)){
+    if (validator.checkMandatoryUserFields(request, response)){
         request.app.locals.db.users.create({email: email, password: password, name: name, address: address}).then(user => {
             if(user === null) {
                 throw new Error("Could not create user");
