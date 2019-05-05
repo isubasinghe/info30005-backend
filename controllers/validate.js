@@ -2,6 +2,7 @@ var emailValidate = require('email-validator');
 const mongoose = require('mongoose');
 mongoose.set('useCreateIndex', true);
 const User = mongoose.model('Users');
+var moment = require('moment');
 // When an invalid email is entered
 function invalidEmail(response){
     try{
@@ -22,7 +23,6 @@ function checkMandatoryUserFields(request, response){
     // Ensures email is a valid email
     if (!request.body.email|| !emailValidate.validate(request.body.email)){
         validFields = false;
-        invalidEmail(response);
     }
     // Ensures the name contains only alphabetic letters
     if (!request.body.name || !/^[a-z]+$/i.test(request.body.name)){
