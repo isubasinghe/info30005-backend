@@ -1,7 +1,7 @@
 "use strict"
 
+var validator = require('./validate.js');
 var emailValidate = require('email-validator');
-
 let successMsg = {
     status: 200,
     msg: "Writen to db, activate account by checking your email"
@@ -39,22 +39,13 @@ function unverifiedUser(response){
         response.status(400).json({msg: "Unverified User"});
     }
 }
-// When an invalid email is entered
-function invalidEmail(response){
-    try{
-        throw new Error("Invalid email")
-    }
-    catch{
-        response.status(400).json({msg: "Invalid email"});
-    }
-}
 function signIn(request, response) {
-    if (!emailValidate.validate(request.body.email)){
-        invalidEmail(response);
+    if(!emailValidate.validate(request.body.email)){
+        validator.invalidEmail(response);
     }
 
     request.app.locals.db.users.findOne({email: request.body.email}).then(user => {
-        if( user.verified ) {
+        // if( user.verified ) {
             user.verifyPassword(request.body.password, function(err, valid) {
                 if(err) {
                     throw new Error("Internal Server Error");
@@ -67,9 +58,9 @@ function signIn(request, response) {
                     }
                 }
             });
-        }else {
-            unverifiedUser(response);
-        }
+        // }else {
+        //     unverifiedUser(response);
+        // }
     })
     .catch(err => {
         response.status(400).json({msg: "Signin Failed: Please check your details"});
@@ -97,41 +88,27 @@ function getErrorMsg(err) {
     return errMsg;
 }
 
-function checkMandatoryFields(request, response){
-    if (!emailValidate.validate(req.body.email)){
-        invalidEmail(response);
-    }
-    if (req.body.name === "" || !/^[a-z]+$/i.test(req.body.name)){
-        response.status(400).json({msg: "Invalid field for name"});
-    }
-    // potentially add geocoding to validatew
-    if (req.body.address === ""){
-        response.status(400).json({msg: "Invalid field for address"});
-    }
-}
-
 function signUp(request, response) {
-    
     const {email, password, name, address} = request.body;
-    if (!emailValidate.validate(request.body.email)){
-        invalidEmail(response);
+    if (validator.checkMandatoryUserFields(request, response)){
+        request.app.locals.db.users.create({email: email, password: password, name: name, address: address}).then(user => {
+            if(user === null) {
+                throw new Error("Could not create user");
+            }else {
+                response.json(successMsg);
+            }
+        }).catch(err => {   
+            response.json(getErrorMsg(err));
+        });
     }
-    request.app.locals.db.users.create({email: email, password: password, name: name, address: address}).then(user => {
-        if(user === null) {
-            throw new Error("Could not create user");
-        }else {
-            response.json(successMsg);
-        }
-    }).catch(err => {   
-        response.json(getErrorMsg(err));
-    });
 }
 // After the link to confirm a signup is sent to the 
 // user and it is clicked, we set the verified status 
 // of that user to true
 function verify(request, response) {
     console.log(request.params.key);
-    request.app.locals.db.users.findOneAndUpdate(
+    if(request.params.key && (request.params.key.length > 0)){
+        request.app.locals.db.users.findOneAndUpdate(
         {verifykey: request.params.key},
         {verified: true},
         {new: false, upsert: false, sort: false, runValidators: true}
@@ -144,6 +121,7 @@ function verify(request, response) {
         }).catch(err => {
             response.json({msg: "Unable to verify user"});
         });
+    }
 }
 
 

@@ -1,23 +1,31 @@
 const mongoose = require('mongoose');
 mongoose.set('useCreateIndex', true);
 const User = mongoose.model('Users');
+const validator = require('./validate.js');
 
-let search = function(req, res) {
+let search = function(request, response) {
     //Searches all the users based on optional parameters on the items location or name
     let queryConditions = {}
     //Finds items nearby a particular location
-    if(req.body.location){
-        queryConditions= {"items.location.coordinates": {$near: {$geometry: req.body.location}}};
+    if(request.body.location){
+        if(validator.locationValidation(request,response)){
+            queryConditions= {"items.location": {$near: {$geometry:{type: "Point", coordinates: request.body.location}}}};
+        }
+        else{
+            response.status(400).json({msg: "Invalid location coordinates"});
+            return;
+        }
     }
     //Finds objects which are of a particular name
-    if(req.body.name){
-        queryConditions.items = {$elemMatch: {name: req.body.name}};
+    if(request.body.name && request.body.name.length > 0){
+        queryConditions.items = {$elemMatch: {name: request.body.name}};
     }
     User.find(queryConditions,'items', function(err, item){
         if(!err){
-            res.send(item);
+            response.send(item);
         }else{
-            res.sendStatus(404);
+            response.send(err);
+            //res.sendStatus(404);
         }
     }).limit(10);
 };

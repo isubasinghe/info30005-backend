@@ -9,6 +9,15 @@ const uuidv4 = require('uuid/v4');
 
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
+const Categories  = Object.freeze({
+    Fruit: "FRUIT",
+    Veg: "VEG",
+    Meat: "MEAT",
+    Fish: "FISH"
+});
+const LocationTypes = Object.freeze({
+    Point: "Point"
+});
 
 const UserSchema = new Schema({
     email: {type: String, lowercase: true, index: true, unique: true, required: true},
@@ -22,25 +31,27 @@ const UserSchema = new Schema({
         name: {type: String, index:true},
         category: {
             type: String,
-            enum: ["FRUIT", "VEG", "MEAT", "FISH"],
+            enum: Object.values(Categories),
             required: true
         },
         location: {
             type: {
                 type: String, 
-                enum: ["Point"],
+                enum: Object.values(LocationTypes),
                 required: true,
             },
             coordinates: {
                 type: [Number],
-                required: true,
-                index: '2dsphere'
+                required: true
             },
         },
+        quantity: {type: Number, required: true},
+        units: {type: Number, required: true, default: 1},
         expiry: {type: Date, required: true, index: true}
     }]
 });
 
+UserSchema.index({"items.location": "2dsphere" });
 
 // On an insert/update to the password field, 
 // ensure that we run it through some rounds of bcrypt encryption.
@@ -58,5 +69,5 @@ UserSchema.post('save', function(doc, next){
         next(err);
     }); 
 });
-
+Object.assign(UserSchema.statics, {Categories, LocationTypes});
 module.exports = mongoose.model("Users", UserSchema);

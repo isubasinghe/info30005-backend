@@ -2,13 +2,17 @@ const mongoose = require('mongoose');
 mongoose.set('useCreateIndex', true);
 const User = mongoose.model('Users');
 const axios = require('axios');
+var emailValidate = require('email-validator');
 
-let generate = function(req, res){
+let generate = function(request, response){
     let ingredients = "";
     //Checks if the email matches a valid token, which signifies a verified login session
-    let email = req.app.locals.jwt.verify(req.body.token);
+    let email = request.app.locals.jwt.verify(request.body.token);
     if (email == null){
         throw new Error("Could not find requested email")
+    }
+    if(!emailValidate.validate(email)){
+        validator.invalidEmail(response);
     }
     else{
         //Gets the matching user and sorts its items based on items expiring soon, with the max results being limited to 10
@@ -27,19 +31,21 @@ let generate = function(req, res){
                         ingredients+=','
                     }
                     ingredients = ingredients.slice(0, ingredients.length-1);
+                    console.log(ingredients);
+                    //Uses the Food2Fork API to generate recipes with users list of ingredients expiring soon
+                    let url = `http://food2fork.com/api/search?q=${ingredients}&key=${process.env.RECIPE_API_KEY}`;
+                    console.log(url);
+                    axios.get(url)
+                    .then(res => {
+                        response.send(res.data);
+                    })
+                    .catch(error => {
+                        response.send(err);
+                    });
                 }
             }).catch(err =>{
-                res.send(err);
+                response.send(err);
             })
-        //Uses the Food2Fork API to generate recipes with users list of ingredients expiring soon
-        let url = `http://food2fork.com/api/search?q=${ingredients}&key=${process.env.API_KEY}`;
-        axios.get(url)
-        .then(response => {
-            res.send(response.data);
-        })
-        .catch(error => {
-            res.send(err);
-        });
     }
     
 }
