@@ -11,7 +11,7 @@ let generate = function(request, response){
     if (email == null){
         throw new Error("Could not find requested email")
     }
-    if(!emailValidate.validate(email)){
+    else if(!emailValidate.validate(email)){
         validator.invalidEmail(response);
     }
     else{
