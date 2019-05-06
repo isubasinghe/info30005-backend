@@ -4,9 +4,15 @@ const User = mongoose.model('Users');
 var moment = require('moment');
 var emailValidate = require('email-validator');
 var validator = require('./validate.js');
+
 let addSuccessMsg = {
     status: 200,
     msg: "Added item to inventory"
+};
+
+let removeSuccessMsg = {
+    status: 200,
+    msg: "Removed item from inventory"
 };
 
 let add = function(request, response) {
@@ -44,16 +50,15 @@ let listAllItems = function(request,response){
     }
     else {
         //Returns all the items for the particular user
-        User.find({email: email}, "items").then(items =>{
+        User.findOne({email: email}, "items").then(items =>{
             if(items === null){
                 throw new Error("Could not find items");
             }
             else{
-                res.send(items);
+                response.send(items);
             }
         }).catch(err =>{
-            throw new Error("Server error");
-            response.send(err);
+             response.send(err);
         })
     }
 }
@@ -63,7 +68,7 @@ let remove = function(request, response) {
     if (email === null){
         throw new Error("Could not find requested email");
     }
-    if(!emailValidate.validate(email)){
+    else if(!emailValidate.validate(email)){
         validator.invalidEmail(response);
     }
     else{
@@ -81,6 +86,23 @@ let remove = function(request, response) {
         }
     }
 };
+
+// let update = function(request, response){
+//     let email = request.app.locals.jwt.verify(request.body.token);
+//     if(email === null){
+//         throw new Error("Could not find requested email");
+//     }
+//     if(!emailValidate.validate(email)){
+//         validator.invalidEmail(response);
+//     }
+//     User.findOneAndUpdate({email: email}, {$pull: {items: {request.body.item}}).then(user => {
+//         if(user === null) {
+//             throw new Error("Could not find user");
+//         }else {
+//             response.send(removeSuccessMsg);
+//         }
+//     })
+// }
 
 module.exports.remove = remove;
 module.exports.add = add;
