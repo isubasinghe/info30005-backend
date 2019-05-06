@@ -44,8 +44,8 @@ let generate = function(request, response){
                     });
                 }
             }).catch(err =>{
-                response.send(err);
-            })
+                response.status(400).json(err);
+            });
     }
     
 }
