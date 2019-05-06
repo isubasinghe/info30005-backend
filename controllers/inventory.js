@@ -21,7 +21,7 @@ let add = function(request, response) {
     if (email === null){
         throw new Error("Could not find requested email");
     }
-    if(!emailValidate.validate(email)){
+    else if(!emailValidate.validate(email)){
         validator.invalidEmail(response);
     }
     else{
@@ -45,12 +45,13 @@ let listAllItems = function(request,response){
     if (email == null){
         throw new Error("Could not find requested email")
     }
-    if(!emailValidate.validate(email)){
+    else if(!emailValidate.validate(email)){
         validator.invalidEmail(response);
     }
     else {
         //Returns all the items for the particular user
         User.findOne({email: email}, "items").then(items =>{
+            console.log(items)
             if(items === null){
                 throw new Error("Could not find items");
             }
@@ -73,8 +74,9 @@ let remove = function(request, response) {
     }
     else{
         //Finds the valid email and removes the item from that user
-        if (validator.checkMandatoryItemFields(request, response)){
-            User.findOneAndUpdate({email: email},{$pull: {items: request.body.item}}).then(user => {
+        // if (validator.checkMandatoryItemFields(request, response)){
+            console.log('Deleted');
+            User.findOneAndUpdate({email: email},{$pull: {items: {_id: request.body.id}}}).then(user => {
                 if(user === null) {
                     throw new Error("Could not find user");
                 }else {
@@ -83,7 +85,7 @@ let remove = function(request, response) {
             }).catch(err => {   
                 response.send(err);
             });
-        }
+        // }
     }
 };
 
