@@ -35,7 +35,7 @@ function checkMandatoryUserFields(request, response){
         response.status(400).json({msg: "Invalid field for address"});
     }
     // Password must be 6-20 character snad have one capital and lowercase and special character
-    if (!request.body.password || !/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/.test(request.body.password)){
+    if (!request.body.password || !/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/.test(request.body.password)){
         validFields = false;
         response.status(400).json({msg: "Invalid field for password"});
     }
