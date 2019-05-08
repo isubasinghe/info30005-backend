@@ -20,7 +20,7 @@ let search = function(request, response) {
     if(request.body.name && request.body.name.length > 0){
         queryConditions.items = {$elemMatch: {name: request.body.name}};
     }
-    request.app.locals.db.users.find(queryConditions,'items', function(err, item){
+    request.app.locals.db.users.find(queryConditions, "", function(err, item){
         if(!err){
             response.send(item);
         }else{
