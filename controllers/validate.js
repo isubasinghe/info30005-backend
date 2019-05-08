@@ -57,9 +57,7 @@ function locationValidation(req, res){
     let lon = req.body.location[0];
     let lat = req.body.location[1];
     if (typeof lon === 'number' && typeof lat === 'number'){
-        console.log("is num");
         if (lon >=-180 && lon<=180 && lat>=-90 && lat<=90){
-            console.log("isvalid");
             isValid = true;
         }
     }
@@ -70,9 +68,7 @@ function locationItemValidation(req, res){
     let lon = req.body.item.location.coordinates[0];
     let lat = req.body.item.location.coordinates[1];
     if (typeof lon === 'number' && typeof lat === 'number'){
-        console.log("is num");
         if (lon >=-180 && lon<=180 && lat>=-90 && lat<=90){
-            console.log("isvalid");
             isValid = true;
         }
     }
