@@ -71,7 +71,6 @@ function signIn(request, response) {
 
 // Sends the approapriate error message
 function getErrorMsg(err) {
-    console.log(err);
     let errMsg;
     if(err.code === 11000){
         errMsg = {
@@ -106,7 +105,6 @@ function signUp(request, response) {
 // user and it is clicked, we set the verified status 
 // of that user to true
 function verify(request, response) {
-    console.log(request.params.key);
     if(request.params.key && (request.params.key.length > 0)){
         request.app.locals.db.users.findOneAndUpdate(
         {verifykey: request.params.key},

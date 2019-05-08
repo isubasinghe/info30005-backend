@@ -33,7 +33,6 @@ let generate = function(request, response){
                     ingredients = ingredients.slice(0, ingredients.length-1);
                     //Uses the Food2Fork API to generate recipes with users list of ingredients expiring soon
                     let url = `http://food2fork.com/api/search?q=${ingredients}&key=${process.env.RECIPE_API_KEY}`;
-                    console.log(url);
                     axios.get(url)
                     .then(res => {
                         response.send(res.data);

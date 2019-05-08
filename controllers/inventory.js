@@ -56,7 +56,6 @@ let listAllItems = function(request,response){
     else {
         //Returns all the items for the particular user
         request.app.locals.db.users.findOne({email: email}, "items").then(items =>{
-            console.log(items)
             if(items === null){
                 throw new Error("Could not find items");
             }
