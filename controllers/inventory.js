@@ -91,8 +91,7 @@ let remove = function(request, response) {
         }
     }
 };
-
-let update = function(request, response){
+let increase = function(request, response){
     let email = request.app.locals.jwt.verify(request.body.token);
     if(email === null){
         throw new Error("Could not find requested email");
@@ -100,23 +99,47 @@ let update = function(request, response){
     if(!emailValidate.validate(email)){
         validator.invalidEmail(response);
     }
-    if(!request.body.quantity || typeof request.body.quantity === 'number'){
-        request.app.locals.db.users.findOneAndUpdate({"items._id": request.body.id}, {"items.$.quantity": request.body.quantity}).then(items => {
-            if(items === null) {
-                throw new Error("Could not find items");
-            }else {
-                response.send(updateSuccessMsg);
-            }
-        }).catch(err=> {
-            response.send(err);
-        });
+    request.app.locals.db.users.findOneAndUpdate({"items._id": request.body.id}, {$inc: {"items.$.quantity": 1}}).then(items => {
+        if(items === null) {
+            throw new Error("Could not find items");
+        }else {
+            response.send(updateSuccessMsg);
+        }
+    }).catch(err=> {
+        response.send(err);
+    });
+}
+
+let decrease = function(request, response){
+    let email = request.app.locals.jwt.verify(request.body.token);
+    if(email === null){
+        throw new Error("Could not find requested email");
     }
-    else{
-        response.status(400).json("units not valid");
+    if(!emailValidate.validate(email)){
+        validator.invalidEmail(response);
     }
+    request.app.locals.db.users.findOneAndUpdate({"items._id": request.body.id, "items.quantity": 1}).then(items => {
+        if(items === null) {
+            throw new Error("Could not find items");
+        }else {
+            response.send(updateSuccessMsg);
+        }
+    }).catch(err=> {
+        response.send(err);
+    });
+    request.app.locals.db.users.findOneAndUpdate({"items._id": request.body.id}, {$inc: {"items.$.quantity": -1}}).then(items => {
+        if(items === null) {
+            throw new Error("Could not find items");
+        }else {
+            response.send(updateSuccessMsg);
+        }
+    }).catch(err=> {
+        response.send(err);
+    });
 }
 
 module.exports.remove = remove;
 module.exports.add = add;
 module.exports.listAllItems = listAllItems;
-module.exports.update = update;
+module.exports.decrease = decrease;
+module.exports.increase = increase;

@@ -45,7 +45,7 @@ function signIn(request, response) {
     }
 
     request.app.locals.db.users.findOne({email: request.body.email}).then(user => {
-        if( user.verified ) {
+        // if( user.verified ) {
             user.verifyPassword(request.body.password, function(err, valid) {
                 if(err) {
                     throw new Error("Internal Server Error");
@@ -58,9 +58,9 @@ function signIn(request, response) {
                     }
                 }
             });
-        }else {
-            unverifiedUser(response);
-        }
+        // }else {
+        //     unverifiedUser(response);
+        // }
     })
     .catch(err => {
         response.status(400).json({msg: "Signin Failed: Please check your details"});
