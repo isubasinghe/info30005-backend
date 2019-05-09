@@ -100,8 +100,8 @@ let update = function(request, response){
     if(!emailValidate.validate(email)){
         validator.invalidEmail(response);
     }
-    if(!request.body.units || typeof request.body.units === 'number'){
-        request.app.locals.db.users.findOneAndUpdate({"items._id": request.body.id}, {"items.$.units": request.body.units}).then(items => {
+    if(!request.body.quantity || typeof request.body.quantity === 'number'){
+        request.app.locals.db.users.findOneAndUpdate({"items._id": request.body.id}, {"items.$.quantity": request.body.quantity}).then(items => {
             if(items === null) {
                 throw new Error("Could not find items");
             }else {
