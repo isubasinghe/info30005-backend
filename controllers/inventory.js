@@ -99,15 +99,17 @@ let increase = function(request, response){
     if(!emailValidate.validate(email)){
         validator.invalidEmail(response);
     }
-    request.app.locals.db.users.findOneAndUpdate({"items._id": request.body.id}, {$inc: {"items.$.quantity": 1}}).then(items => {
-        if(items === null) {
-            throw new Error("Could not find items");
-        }else {
-            response.send(updateSuccessMsg);
-        }
-    }).catch(err=> {
-        response.send(err);
-    });
+    if(request.body.id || typeof request.body.id == 'string'){
+        request.app.locals.db.users.findOneAndUpdate({"items._id": request.body.id}, {$inc: {"items.$.units": 1}}).then(items => {
+            if(items === null) {
+                throw new Error("Could not find items");
+            }else {
+                response.send(updateSuccessMsg);
+            }
+        }).catch(err=> {
+            response.send(err);
+        });
+    }
 }
 
 let decrease = function(request, response){
@@ -118,24 +120,17 @@ let decrease = function(request, response){
     if(!emailValidate.validate(email)){
         validator.invalidEmail(response);
     }
-    request.app.locals.db.users.findOneAndUpdate({"items._id": request.body.id, "items.quantity": 1}).then(items => {
-        if(items === null) {
-            throw new Error("Could not find items");
-        }else {
-            response.send(updateSuccessMsg);
-        }
-    }).catch(err=> {
-        response.send(err);
-    });
-    request.app.locals.db.users.findOneAndUpdate({"items._id": request.body.id}, {$inc: {"items.$.quantity": -1}}).then(items => {
-        if(items === null) {
-            throw new Error("Could not find items");
-        }else {
-            response.send(updateSuccessMsg);
-        }
-    }).catch(err=> {
-        response.send(err);
-    });
+    if(request.body.id || typeof request.body.id == 'string'){
+        request.app.locals.db.users.findOneAndUpdate({"items._id": request.body.id}, {$inc: {"items.$.units": -1}}).then(items => {
+            if(items === null) {
+                throw new Error("Could not find items");
+            }else {
+                response.send(updateSuccessMsg);
+            }
+        }).catch(err=> {
+            response.send(err);
+        });
+    }
 }
 
 module.exports.remove = remove;

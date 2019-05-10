@@ -46,7 +46,7 @@ const UserSchema = new Schema({
             },
         },
         quantity: {type: Number, required: true},
-        units: {type: Number, required: true, default: 1},
+        units: {type: Number, required: true, index: true},
         expiry: {type: Date, required: true, index: true}
     }]
 });
