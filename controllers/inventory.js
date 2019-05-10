@@ -20,6 +20,11 @@ let updateSuccessMsg = {
     msg: "Updated item"
 };
 
+let zeroQuantity = {
+    status: 200,
+    msg: "Quantity cannot be 0"
+};
+
 let add = function(request, response) {
     //Checks if the email matches a valid token, which signifies a verified login session
     let email = request.app.locals.jwt.verify(request.body.token);
@@ -93,14 +98,16 @@ let remove = function(request, response) {
 };
 let increase = function(request, response){
     let email = request.app.locals.jwt.verify(request.body.token);
+    // Ensures email is valid
     if(email === null){
         throw new Error("Could not find requested email");
     }
     if(!emailValidate.validate(email)){
         validator.invalidEmail(response);
     }
+    // Ensures item id is valid
     if(request.body.id || typeof request.body.id == 'string'){
-        request.app.locals.db.users.findOneAndUpdate({"items._id": request.body.id}, {$inc: {"items.$.units": 1}}).then(items => {
+        request.app.locals.db.users.findOneAndUpdate({"items._id": request.body.id}, {$inc: {"items.$.quantity": 1}}).then(items => {
             if(items === null) {
                 throw new Error("Could not find items");
             }else {
@@ -114,18 +121,35 @@ let increase = function(request, response){
 
 let decrease = function(request, response){
     let email = request.app.locals.jwt.verify(request.body.token);
+    // Ensures email is valid
     if(email === null){
         throw new Error("Could not find requested email");
     }
     if(!emailValidate.validate(email)){
         validator.invalidEmail(response);
     }
+    // Ensures item id is valid
     if(request.body.id || typeof request.body.id == 'string'){
-        request.app.locals.db.users.findOneAndUpdate({"items._id": request.body.id}, {$inc: {"items.$.units": -1}}).then(items => {
+        request.app.locals.db.users.findOne({"items._id": request.body.id}, "items.$").then(items => {
             if(items === null) {
                 throw new Error("Could not find items");
             }else {
-                response.send(updateSuccessMsg);
+                // Ensures item has at least 2 of the item
+                if (items.items[0].quantity > 1){
+                    request.app.locals.db.users.findOneAndUpdate({"items._id": request.body.id}, {$inc: {"items.$.quantity": -1}}).then(items => {
+                        if(items === null) {
+                            throw new Error("Could not find items");
+                        }else {
+                            response.send(updateSuccessMsg);
+                        }
+                    }).catch(err=> {
+                        response.send(err);
+                    });
+                }
+                // User trying to decrease quantity to 0 which is not allowed 
+                else{
+                    response.send(zeroQuantity);
+                }
             }
         }).catch(err=> {
             response.send(err);
