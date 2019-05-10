@@ -33,18 +33,18 @@ function checkMandatoryUserFields(request, response){
 
     }
     // Ensures the name contains only alphabetic letters
-    if (!request.body.name || !/^[a-z]+$/i.test(request.body.name)){
+    if (!request.body.name || !/^[a-zA-Z\s]*$/i.test(request.body.name)){
         validFields = false;
         response.status(400).json({msg: "Invalid field for name"});
         return validFields;
     }
-    // Ensures location is a lognitude latitiude
+    // Ensures location is a longitude, latitiude pair
     if (!request.body.address || request.body.address === ""){
         validFields = false;
         response.status(400).json({msg: "Invalid field for address"});
         return validFields;
     }
-    // Password must be 6-20 character snad have one capital and lowercase and special character
+    // Password must be 6-20 characters and have one capital and lowercase and special character
     if (!request.body.password || !/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/.test(request.body.password)){
         validFields = false;
         response.status(400).json({msg: "Invalid field for password"});
