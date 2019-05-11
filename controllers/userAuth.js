@@ -1,7 +1,9 @@
 "use strict"
 
-var validator = require('./validate.js');
-var emailValidate = require('email-validator');
+const validator = require('./validate.js');
+const emailValidate = require('email-validator');
+const search = require('../models/address');
+
 let successMsg = {
     status: 200,
     msg: "Writen to db, activate account by checking your email"
@@ -87,16 +89,38 @@ function getErrorMsg(err) {
     return errMsg;
 }
 
-function signUp(request, response) {
+async function signUp(request, response) {
     const {email, password, name, address} = request.body;
+    let coords = [];
+    try {
+        let results = await search(address);
+        if(results.data.features === undefined) {
+            throw new Error("Features not fetched");
+        }
+        if(results.data.features[0] === undefined) {
+            throw new Error("features not present");
+        }
+
+        if(results.data.features[0].relevance < 0.7) {
+            throw new Error("Address relevance is too low");
+        }
+        coords = results.data.features[0].geometry;
+        console.log(coords);
+    }catch(err) {
+        console.log(err);
+        response.status(400).json({msg: "Invalid field for address"});
+        return;
+    }
+
     if (validator.checkMandatoryUserFields(request, response)){
-        request.app.locals.db.users.create({email: email, password: password, name: name, address: address}).then(user => {
+        request.app.locals.db.users.create({email: email, password: password, name: name, address: address, defaultloc: coords}).then(user => {
             if(user === null) {
                 throw new Error("Could not create user");
             }else {
                 response.json(successMsg);
             }
         }).catch(err => {   
+            console.log(err);
             response.status(400).json(getErrorMsg(err));
         });
     }
