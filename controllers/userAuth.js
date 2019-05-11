@@ -98,7 +98,7 @@ function signUp(request, response) {
                 response.json(successMsg);
             }
         }).catch(err => {   
-            response.json(getErrorMsg(err));
+            response.status(400).json(getErrorMsg(err));
         });
     }
 }
@@ -116,7 +116,7 @@ function verify(request, response) {
             if(user === null) {
                 throw new Error("Unable to find user");
             }else {
-                response.json({msg: "Verfied user"});
+                response.json({msg: "Verified user"});
             }
         }).catch(err => {
             response.json({msg: "Unable to verify user"});
