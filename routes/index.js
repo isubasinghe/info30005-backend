@@ -17,6 +17,7 @@ router.post('/api/v1/inventory/removeItem', inventory.remove);
 router.post('/api/v1/inventory/listAllItems', inventory.listAllItems);
 router.post('/api/v1/inventory/increaseQuantity', inventory.increase);
 router.post('/api/v1/inventory/decreaseQuantity', inventory.decrease);
+router.post('/api/v1/inventory/updateQuantity', inventory.update);
 
 router.post('/api/v1/recipe/generate', recipe.generate);
 
