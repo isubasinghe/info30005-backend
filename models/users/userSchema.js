@@ -27,6 +27,17 @@ const UserSchema = new Schema({
     rating: {type: Number, required: true, default: 5.0},
     verifykey: {type: String, required: true, index: true, default: uuidv4, unique: true},
     verified: {type: Boolean, required: true, default: false},
+    defaultloc: {    
+        type: {
+            type: String, 
+            enum: Object.values(LocationTypes),
+            required: true,
+        },
+        coordinates: {
+            type: [Number],
+            required: true
+        },
+    },
     items: [{
         name: {type: String, index:true},
         category: {
@@ -52,6 +63,7 @@ const UserSchema = new Schema({
 });
 
 UserSchema.index({"items.location": "2dsphere" });
+UserSchema.index({"defaultloc": "2dsphere" });
 
 // On an insert/update to the password field, 
 // ensure that we run it through some rounds of bcrypt encryption.
