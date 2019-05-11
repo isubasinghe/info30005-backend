@@ -53,7 +53,7 @@ function signIn(request, response) {
                     throw new Error("Internal Server Error");
                 }else {
                     if(valid) {
-                        let token = request.app.locals.jwt.create(user.email, '12h');
+                        let token = request.app.locals.jwt.create(user.email, '12h', user.defaultloc);
                         response.json({token: token});
                     }else {
                         incorrectLogin(response);
