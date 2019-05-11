@@ -19,11 +19,11 @@ const LocationTypes = Object.freeze({
     Point: "Point"
 });
 const UnitTypes = Object.freeze({
+    Piece: "piece",
     Kilogram: "kg",
     Grams: "g",
     Litre: "L",
-    MilliLitre: "mL",
-    Tablespoon: "tbsp"
+    MilliLitre: "mL"
 });
 
 const UserSchema = new Schema({
@@ -65,8 +65,6 @@ const UserSchema = new Schema({
         },
         // The number of actual items
         quantity: {type: Number, required: true, index: true, min: 1},
-        // The weight of item
-        weight: {type: Number, required: true},
         // Unit of measurement for weight
         units: {type: String, enum: Object.values(UnitTypes), required: true},
         expiry: {type: Date, required: true, index: true}
