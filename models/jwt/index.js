@@ -14,8 +14,8 @@ function verify(token) {
 }
 
 // Create a JWT payload signed with our secret key
-function create(user, maxAge) {
-    let token = jwt.sign({user: user},
+function create(user, maxAge, defaultloc) {
+    let token = jwt.sign({user: user, defaultloc: defaultloc},
     key,
     {issuer: 'FoodSpan', subject: 'session-token',  algorithm: 'HS256', expiresIn: maxAge});
     return token;
