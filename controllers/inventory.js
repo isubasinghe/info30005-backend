@@ -20,9 +20,9 @@ let updateSuccessMsg = {
     msg: "Updated item"
 };
 
-let zeroQuantity = {
-    status: 200,
-    msg: "Quantity cannot be 0"
+let itemCannotBeFound = {
+    status: 400,
+    msg: "Item does not exist"
 };
 
 let add = function(request, response) {
@@ -146,13 +146,13 @@ let decrease = function(request, response){
                         response.send(err);
                     });
                 }
-                // User trying to decrease quantity to 0 which is not allowed 
+                // User trying to decrease quantity to 0 which is removing the item
                 else{
-                    response.send(zeroQuantity);
+                    remove(request, response);
                 }
             }
         }).catch(err=> {
-            response.send(err);
+            response.send(itemCannotBeFound);
         });
     }
 }
