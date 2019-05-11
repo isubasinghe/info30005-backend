@@ -20,10 +20,6 @@ let updateSuccessMsg = {
     msg: "Updated item"
 };
 
-let itemCannotBeFound = {
-    status: 400,
-    msg: "Item does not exist"
-};
 
 let add = function(request, response) {
     //Checks if the email matches a valid token, which signifies a verified login session
@@ -152,7 +148,9 @@ let decrease = function(request, response){
                 }
             }
         }).catch(err=> {
-            response.send(itemCannotBeFound);
+            response.status(400).send({
+                msg: "Item does not exist"
+            });
         });
     }
 }
