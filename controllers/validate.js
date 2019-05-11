@@ -38,7 +38,7 @@ function checkMandatoryUserFields(request, response){
         response.status(400).json({msg: "Invalid field for name"});
         return validFields;
     }
-    // Ensures location is a longitude, latitiude pair
+    // Ensures location is a string
     if (!request.body.address || request.body.address === ""){
         validFields = false;
         response.status(400).json({msg: "Invalid field for address"});
@@ -82,8 +82,8 @@ function checkMandatoryItemFields(request, response){
         response.status(400).json({msg: "Invalid entry for fields"});
         return validFields;
     }
-    // ensure item name is an alphabetic string
-    if (!request.body.item.name || !/^[a-z]+$/i.test(request.body.item.name)){
+    // ensure item name is an alphabetic string or has spaces
+    if (!request.body.item.name ||  !/^[a-zA-Z\s]*$/i.test(request.body.item.name)){
         validFields = false;
         response.status(400).json({msg: "Invalid field for item name"});
         return validFields;
@@ -92,18 +92,6 @@ function checkMandatoryItemFields(request, response){
     if (!request.body.item.category || !Object.values(User.Categories).includes(request.body.item.category)){
         validFields = false;
         response.status(400).json({msg: "Invalid field for category"});
-        return validFields;
-    }
-    // ensures location is a longitude latitude point type
-    if (!request.body.item.location.type || !Object.values(User.LocationTypes).includes(request.body.item.location.type)){
-        validFields = false;
-        response.status(400).json({msg: "Invalid field for location type"});
-        return validFields;
-    }
-    // ensures actual coordinates fit with longitue and latitiude requirements
-    if (!request.body.item.location.coordinates || !locationItemValidation(request, response)){
-        validFields = false;
-        response.status(400).json({msg: "Invalid field for location coordinates"});
         return validFields;
     }
     // ensure quantity is numeric
