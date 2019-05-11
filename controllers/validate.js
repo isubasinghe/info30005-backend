@@ -100,10 +100,16 @@ function checkMandatoryItemFields(request, response){
         response.status(400).json({msg: "Invalid field for quantity"});
         return validFields;
     }
-    // ensure units is numeric
-    if (!request.body.item.units || !(typeof request.body.item.units === 'number')){
+    // ensure units is of accepted unit measurements (kg, g, l, mL, tbsp)
+    if (!request.body.item.units || !Object.values(User.UnitTypes).includes(request.body.item.units)){
         validFields = false;
         response.status(400).json({msg: "Invalid field for units"});
+        return validFields;
+    }
+    // ensure weight is numeric
+    if (!request.body.item.weight || !(typeof request.body.item.weight === 'number')){
+        validFields = false;
+        response.status(400).json({msg: "Invalid field for weight"});
         return validFields;
     }
     // ensure date is valid

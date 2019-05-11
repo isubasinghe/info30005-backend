@@ -18,6 +18,13 @@ const Categories  = Object.freeze({
 const LocationTypes = Object.freeze({
     Point: "Point"
 });
+const UnitTypes = Object.freeze({
+    Kilogram: "kg",
+    Grams: "g",
+    Litre: "L",
+    MilliLitre: "mL",
+    Tablespoon: "tbsp"
+});
 
 const UserSchema = new Schema({
     email: {type: String, lowercase: true, index: true, unique: true, required: true},
@@ -59,7 +66,9 @@ const UserSchema = new Schema({
         // The number of actual items
         quantity: {type: Number, required: true, index: true, min: 1},
         // The weight of item
-        units: {type: Number, required: true},
+        weight: {type: Number, required: true},
+        // Unit of measurement for weight
+        units: {type: String, enum: Object.values(UnitTypes), required: true},
         expiry: {type: Date, required: true, index: true}
     }]
 });
@@ -83,5 +92,5 @@ UserSchema.post('save', function(doc, next){
         next(err);
     }); 
 });
-Object.assign(UserSchema.statics, {Categories, LocationTypes});
+Object.assign(UserSchema.statics, {Categories, LocationTypes, UnitTypes});
 module.exports = mongoose.model("Users", UserSchema);
