@@ -56,8 +56,10 @@ const UserSchema = new Schema({
                 required: true
             },
         },
-        quantity: {type: Number, required: true},
-        units: {type: Number, required: true, default: 1},
+        // The number of actual items
+        quantity: {type: Number, required: true, index: true, min: 1},
+        // The weight of item
+        units: {type: Number, required: true},
         expiry: {type: Date, required: true, index: true}
     }]
 });
