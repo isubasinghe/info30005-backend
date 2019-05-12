@@ -41,8 +41,9 @@ let generate = function(request, response){
                         response.send(err);
                     });
                 }
+            // User has not added items yet, so return a 200
             }).catch(err =>{
-                response.status(400).json(err);
+                response.status(200).json({msg: "No items"});
             });
     }
     
