@@ -35,7 +35,12 @@ let generate = function(request, response){
                     let url = `http://food2fork.com/api/search?q=${ingredients}&key=${process.env.RECIPE_API_KEY}`;
                     axios.get(url)
                     .then(res => {
-                        response.send(res.data);
+                        if(res.data.error){
+                            response.send({recipes: []});
+                        }
+                        else{
+                            response.send(res.data);
+                        }
                     })
                     .catch(error => {
                         response.send(err);
