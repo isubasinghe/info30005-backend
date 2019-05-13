@@ -61,6 +61,7 @@ let listAllItems = function(request,response){
                 throw new Error("Could not find items");
             }
             else{
+                items.msg = "Listing items";
                 response.send(items);
             }
         }).catch(err =>{
