@@ -22,9 +22,10 @@ let search = function(request, response) {
     }
     request.app.locals.db.users.find(queryConditions, "", function(err, item){
         if(!err){
+            item.msg = "Searched items";
             response.send(item);
         }else{
-            response.send(err);
+            response.status(400).json({msg: "Could not find matching users"});
             //res.sendStatus(404);
         }
     }).limit(10);
