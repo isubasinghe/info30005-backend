@@ -24,7 +24,7 @@ let search = function(request, response) {
         if(!err){
             response.send(item);
         }else{
-            response.send(err);
+            response.status(400).json({msg: "Could not find matching users"});
             //res.sendStatus(404);
         }
     }).limit(10);

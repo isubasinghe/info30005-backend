@@ -40,7 +40,7 @@ let add = function(request, response) {
                     response.send(addSuccessMsg);
                 }
             }).catch(err => { 
-                response.send(err);
+                response.status(400).json({msg: "Cannot add"});
             });
         }
     }
@@ -64,7 +64,7 @@ let listAllItems = function(request,response){
                 response.send(items);
             }
         }).catch(err =>{
-             response.send(err);
+            response.status(400).json({msg: "Cannot find items"});
         })
     }
 }
@@ -88,7 +88,7 @@ let remove = function(request, response) {
                     response.send(removeSuccessMsg);
                 }
             }).catch(err => {   
-                response.send(err);
+                response.status(400).json({msg: "Cannot remove"});
             });
         }
     }
@@ -111,7 +111,7 @@ let increase = function(request, response){
                 response.send(updateSuccessMsg);
             }
         }).catch(err=> {
-            response.send(err);
+            response.status(400).json({msg: "Cannot increase quantity"});
         });
     }
 }
@@ -140,7 +140,7 @@ let decrease = function(request, response){
                             response.send(updateSuccessMsg);
                         }
                     }).catch(err=> {
-                        response.send(err);
+                        response.status(400).json({msg: "Cannot decrease quantity"});
                     });
                 }
                 // User trying to decrease quantity to 0 which is removing the item
