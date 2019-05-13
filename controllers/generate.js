@@ -36,14 +36,16 @@ let generate = function(request, response){
                     axios.get(url)
                     .then(res => {
                         if(res.data.error){
-                            response.send({recipes: []});
+                            response.send({recipes: [], msg:"No recipes"});
                         }
                         else{
-                            response.send(res.data);
+                            let data = res.data;
+                            data.msg = "Successfully got recipes";
+                            response.send(data);
                         }
                     })
                     .catch(error => {
-                        response.send(err);
+                        response.status(400).json({msg: "Could not find recipes"});
                     });
                 }
             // User has not added items yet, so return a 200
