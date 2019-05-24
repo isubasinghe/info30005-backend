@@ -11,6 +11,7 @@ const userAuth = require('../controllers/userAuth.js');
 
 
 router.post('/api/v1/inventory/search', marketplace.search);
+router.post('/api/v1/inventory/marketplace/contact', marketplace.email_seller);
 
 router.post('/api/v1/inventory/addItem', inventory.add);
 router.post('/api/v1/inventory/removeItem', inventory.remove);

@@ -20,9 +20,7 @@ const LocationTypes = Object.freeze({
 });
 const UnitTypes = Object.freeze({
     Piece: "piece",
-    Kilogram: "kg",
     Grams: "g",
-    Litre: "L",
     MilliLitre: "mL"
 });
 
