@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 mongoose.set('useCreateIndex', true);
 const User = mongoose.model('Users');
 const validator = require('./validate.js');
+const emailValidate = require('email-validator');
 const marketplace_communicate = require('../models/sendgrid/marketplace_email.js');
 
 let search = function(request, response) {
