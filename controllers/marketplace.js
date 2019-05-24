@@ -32,16 +32,25 @@ let search = function(request, response) {
     }).limit(10);
 };
 
-let trigger_email = function(request, response){
-    marketplace_communicate(request.body.seller_email, request.body.buyer_email).then(success => {
-        console.log(success);
-        response.status(200).json({msg: "Contacted requested user"});
-    }).catch(err => {
-        console.log(err);
-        response.status(400).json({msg: "Could not contact user"});
-    }); 
+let email_seller = function(request, response){
+    let buyer_email = request.app.locals.jwt.verify(request.body.token);
+    if (buyer_email === null || request.body.seller_email === null){
+        throw new Error("Could not find requested email");
+    }
+    else if(!emailValidate.validate(buyer_email) || !emailValidate.validate(request.body.seller_email)){
+        validator.invalidEmail(response);
+    }
+    else{
+        marketplace_communicate(request.body.seller_email, buyer_email).then(success => {
+            console.log(success);
+            response.status(200).json({msg: "Contacted requested user"});
+        }).catch(err => {
+            console.log(err);
+            response.status(400).json({msg: "Could not contact user"});
+        }); 
+    }
 };
 
 
 module.exports.search = search;
-module.exports.trigger_email = trigger_email;
+module.exports.email_seller = email_seller;
