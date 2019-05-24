@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 mongoose.set('useCreateIndex', true);
 const User = mongoose.model('Users');
 const validator = require('./validate.js');
+const marketplace_communicate = require('../models/sendgrid/marketplace_email.js');
 
 let search = function(request, response) {
     //Searches all the users based on optional parameters on the items location or name
@@ -31,6 +32,16 @@ let search = function(request, response) {
     }).limit(10);
 };
 
+let trigger_email = function(request, response){
+    marketplace_communicate(request.body.seller_email, request.body.buyer_email).then(success => {
+        console.log(success);
+        response.status(200).json({msg: "Contacted requested user"});
+    }).catch(err => {
+        console.log(err);
+        response.status(400).json({msg: "Could not contact user"});
+    }); 
+};
 
 
 module.exports.search = search;
+module.exports.trigger_email = trigger_email;
