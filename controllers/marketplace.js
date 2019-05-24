@@ -35,7 +35,7 @@ let search = function(request, response) {
 let email_seller = function(request, response){
     let buyer_email = request.app.locals.jwt.verify(request.body.token);
     if (buyer_email === null || request.body.seller_email === null){
-        throw new Error("Could not find requested email");
+        response.status(400).json({msg: "Could not find email"});
     }
     else if(!emailValidate.validate(buyer_email) || !emailValidate.validate(request.body.seller_email)){
         validator.invalidEmail(response);
