@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "nodemon ./bin/www",
     "start": "node ./bin/www",
-    "prod": "node ./bin/www"
+    "prod": "node ./bin/www",
+    "test": "mocha"
   },
   "dependencies": {
     "@sendgrid/mail": "^6.3.1",

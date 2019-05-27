@@ -108,7 +108,7 @@ function checkMandatoryItemFields(request, response){
     }
     // ensure date is valid
     let date = moment(request.body.item.expiry);
-    if (!request.body.item.expiry || !date.isValid()){
+    if (!request.body.item.expiry || !date.isValid() || date.isBefore(moment())){
         validFields = false;
         response.status(400).json({msg: "Invalid field for expiry"});
         return validFields;
