@@ -20,7 +20,7 @@ let mailSettings = {
 
 // Send a verification email with a link to 
 // click on, in order to verify the account.
-function email_user(email, key) {
+function emailUser(email, key) {
     const msg = {
         to: email,
         from: mailSettings.from,
@@ -32,4 +32,4 @@ function email_user(email, key) {
 }
 
 
-module.exports = email_user;
+module.exports = emailUser;
