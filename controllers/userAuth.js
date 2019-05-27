@@ -1,5 +1,5 @@
 "use strict"
-
+const email_user = require('../models/sendgrid/index.js');
 const validator = require('./validate.js');
 const emailValidate = require('email-validator');
 const search = require('../models/address');
@@ -69,8 +69,6 @@ function signIn(request, response) {
     });
 }
 
-
-
 // Sends the approapriate error message
 function getErrorMsg(err) {
     let errMsg;
@@ -88,7 +86,15 @@ function getErrorMsg(err) {
     }
     return errMsg;
 }
-
+function email_new_user(email, verifykey){
+    // Notify the user to verify their email whenever
+    // a new User is about to be created.
+    email_user(email, verifykey).then(success => {
+        console.log(success);
+    }).catch(err => {
+        console.log(err);
+    }); 
+}
 async function signUp(request, response) {
     const {email, password, name, address} = request.body;
     let coords = [];
@@ -117,6 +123,7 @@ async function signUp(request, response) {
             if(user === null) {
                 throw new Error("Could not create user");
             }else {
+                email_new_user(user.email, user.verifykey);
                 response.json(successMsg);
             }
         }).catch(err => {   

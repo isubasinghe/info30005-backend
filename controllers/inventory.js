@@ -178,7 +178,7 @@ let update = function(request, response){
             });
         }
         // remove item
-        else if (request.body.quantity == 0){
+        else if (request.body.quantity <= 0){
             remove(request, response);
         }
         else{

@@ -1,6 +1,5 @@
 "use strict"
 
-const email = require('../sendgrid');
 
 const mongoose = require('mongoose');
 const bcrypt = require('mongoose-bcrypt');
@@ -77,16 +76,6 @@ UserSchema.index({"defaultloc": "2dsphere" });
 
 UserSchema.plugin(bcrypt);
 
-// Notify the user to verify their email whenever
-// a new User is about to be created.
-UserSchema.post('save', function(doc, next){
-    console.log("Sending email to " + this.get('email'));
-    email(this.get('email'), this.get('verifykey')).then(success => {
-        console.log(success);
-        next();
-    }).catch(err => {
-        next(err);
-    }); 
-});
+
 Object.assign(UserSchema.statics, {Categories, LocationTypes, UnitTypes});
 module.exports = mongoose.model("Users", UserSchema);
