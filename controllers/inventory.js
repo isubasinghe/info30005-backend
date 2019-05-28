@@ -164,7 +164,7 @@ let update = function(request, response){
     if(!emailValidate.validate(email)){
         validator.invalidEmail(response);
     }
-    if(!request.body.quantity && typeof request.body.quantity === 'number'){
+    if(typeof request.body.quantity === 'number'){
         // updates quantity if new quantity is positive value
         if (request.body.quantity > 0){
             request.app.locals.db.users.findOneAndUpdate({"items._id": request.body.id}, {"items.$.quantity": request.body.quantity}).then(items => {
@@ -174,7 +174,8 @@ let update = function(request, response){
                     response.send(updateSuccessMsg);
                 }
             }).catch(err=> {
-                response.send(err);
+                console.log(err);
+                response.status(400).send({msg: "Cannot update quantity"});
             });
         }
         // remove item
@@ -182,11 +183,11 @@ let update = function(request, response){
             remove(request, response);
         }
         else{
-            response.status(400).send("quantity not valid");
+            response.status(400).send({msg: "Invalid quantity"});
         }
     }
     else{
-        response.status(400).send("quantity not valid");
+        response.status(400).send({msg: "Invalid quantity"});
     }
 }
 

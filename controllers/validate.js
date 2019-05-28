@@ -95,7 +95,7 @@ function checkMandatoryItemFields(request, response){
         return validFields;
     }
     // ensure quantity is numeric
-    if (!request.body.item.quantity || !(typeof request.body.item.quantity === 'number')){
+    if (!request.body.item.quantity || !(typeof request.body.item.quantity === 'number') || request.body.item.quantity <=0){
         validFields = false;
         response.status(400).json({msg: "Invalid field for quantity"});
         return validFields;
