@@ -2,6 +2,7 @@ var emailValidate = require('email-validator');
 const mongoose = require('mongoose');
 mongoose.set('useCreateIndex', true);
 const User = mongoose.model('Users');
+const Item = mongoose.model('item');
 var moment = require('moment');
 // When an invalid email is entered
 function invalidEmail(response){
@@ -89,28 +90,33 @@ function checkMandatoryItemFields(request, response){
         return validFields;
     }
     // ensures categories are of the item categories in schema
-    if (!request.body.item.category || !Object.values(User.Categories).includes(request.body.item.category)){
+    if (!request.body.item.category || !Object.values(Item.Categories).includes(request.body.item.category)){
         validFields = false;
         response.status(400).json({msg: "Invalid field for category"});
         return validFields;
     }
     // ensure quantity is numeric
-    if (!request.body.item.quantity || !(typeof request.body.item.quantity === 'number')){
+    if (!request.body.item.quantity || !(typeof request.body.item.quantity === 'number') || request.body.item.quantity <=0){
         validFields = false;
         response.status(400).json({msg: "Invalid field for quantity"});
         return validFields;
     }
     // ensure units is of accepted unit measurements (piece, kg, g, l, mL)
-    if (!request.body.item.units || !Object.values(User.UnitTypes).includes(request.body.item.units)){
+    if (!request.body.item.units || !Object.values(Item.UnitTypes).includes(request.body.item.units)){
         validFields = false;
         response.status(400).json({msg: "Invalid field for units"});
         return validFields;
     }
     // ensure date is valid
     let date = moment(request.body.item.expiry);
-    if (!request.body.item.expiry || !date.isValid()){
+    if (!request.body.item.expiry || !date.isValid() || date.isBefore(moment())){
         validFields = false;
         response.status(400).json({msg: "Invalid field for expiry"});
+        return validFields;
+    }
+    if(!locationItemValidation(request, response)){
+        validFields = false;
+        response.status(400).json({msg: "Invalid field for location"});
         return validFields;
     }
     return validFields;
