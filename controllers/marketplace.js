@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 mongoose.set('useCreateIndex', true);
-const User = mongoose.model('Users');
 const validator = require('./validate.js');
+const ObjectId = mongoose.Types.ObjectId;
 const emailValidate = require('email-validator');
 const marketplace_communicate = require('../models/sendgrid/marketplace_email.js');
 
@@ -11,7 +11,7 @@ let search = function(request, response) {
     //Finds items nearby a particular location
     if(request.body.location){
         if(validator.locationValidation(request,response)){
-            queryConditions= {"items.location": {$near: {$geometry:{type: "Point", coordinates: request.body.location}}}};
+            queryConditions= {location: {$near: {$geometry:{type: "Point", coordinates: request.body.location}}}};
         }
         else{
             response.status(400).json({msg: "Invalid location coordinates"});
@@ -20,17 +20,39 @@ let search = function(request, response) {
     }
     //Finds objects which are of a particular name
     if(request.body.name && request.body.name.length > 0){
-        queryConditions.items = {$elemMatch: {name: request.body.name}};
+        queryConditions = {name: request.body.name};
     }
-    request.app.locals.db.users.find(queryConditions, "", function(err, item){
-        if(!err){
-            item.msg = "Searched items";
-            response.send(item);
-        }else{
-            response.status(400).json({msg: "Could not find matching users"});
-            //res.sendStatus(404);
+    console.log(queryConditions)
+    request.app.locals.db.items.find(queryConditions).then(items => {
+        if(!items === null){
+            throw new Error("Could not find item");
         }
-    }).limit(10);
+        else{
+            let itemUserInfo = {};
+            itemUserInfo.msg = "Searched items";
+            itemUserInfo.items = items;
+            var usernames = [];
+            console.log(items.length);
+            for (let i=0; i < items.length; i++){
+                request.app.locals.db.users.findOne({_id: items[i].user}).then(users => {
+                    if(users=== null) {
+                        response.status(400).json({msg: "Could not find matching users"});
+                        return;
+                    }else {
+                        usernames[i] = users.name;
+                        console.log(usernames[i], i);
+                        if(i == items.length-1){
+                            itemUserInfo.users = usernames;
+                            response.send(itemUserInfo);
+                        }
+                    }
+                });
+            }
+        }
+    }).catch(err =>{
+            response.status(400).json({msg: "Could not find matching items"});
+            //res.sendStatus(404);
+    });
 };
 
 let email_seller = function(request, response){

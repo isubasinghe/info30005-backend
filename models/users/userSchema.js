@@ -8,20 +8,10 @@ const uuidv4 = require('uuid/v4');
 
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
-const Categories  = Object.freeze({
-    Fruit: "FRUIT",
-    Veg: "VEG",
-    Meat: "MEAT",
-    Fish: "FISH"
-});
 const LocationTypes = Object.freeze({
     Point: "Point"
 });
-const UnitTypes = Object.freeze({
-    Piece: "piece",
-    Grams: "g",
-    MilliLitre: "mL"
-});
+
 
 const UserSchema = new Schema({
     email: {type: String, lowercase: true, index: true, unique: true, required: true},
@@ -41,31 +31,7 @@ const UserSchema = new Schema({
             type: [Number],
             required: true
         },
-    },
-    items: [{
-        name: {type: String, index:true},
-        category: {
-            type: String,
-            enum: Object.values(Categories),
-            required: true
-        },
-        location: {
-            type: {
-                type: String, 
-                enum: Object.values(LocationTypes),
-                required: true,
-            },
-            coordinates: {
-                type: [Number],
-                required: true
-            },
-        },
-        // The number of actual items
-        quantity: {type: Number, required: true, index: true, min: 1},
-        // Unit of measurement for weight
-        units: {type: String, enum: Object.values(UnitTypes), required: true},
-        expiry: {type: Date, required: true, index: true}
-    }]
+    }
 });
 
 UserSchema.index({"items.location": "2dsphere" });
@@ -75,7 +41,4 @@ UserSchema.index({"defaultloc": "2dsphere" });
 // ensure that we run it through some rounds of bcrypt encryption.
 
 UserSchema.plugin(bcrypt);
-
-
-Object.assign(UserSchema.statics, {Categories, LocationTypes, UnitTypes});
 module.exports = mongoose.model("Users", UserSchema);
