@@ -1,10 +1,8 @@
 const mongoose = require('mongoose');
 mongoose.set('useCreateIndex', true);
-const User = mongoose.model('Users');
 var moment = require('moment');
 var emailValidate = require('email-validator');
 var validator = require('./validate.js');
-
 let addSuccessMsg = {
     status: 200,
     msg: "Added item to inventory"
@@ -32,15 +30,27 @@ let add = function(request, response) {
     }
     else{
         // Finds the user which matches the specific email, and adds the new item to their inventory
+       
         if (validator.checkMandatoryItemFields(request, response)){
-            request.app.locals.db.users.findOneAndUpdate({email: email},{$push: {items: request.body.item}}).then(user => {
-                if(user === null) {
+            request.app.locals.db.users.findOne({email: email}).then(users => {
+                if(users === null) {
                     throw new Error("Could not find user");
                 }else {
-                    response.send(addSuccessMsg);
-                }
+                    let newItem = request.body.item;
+                    newItem.user = users._id;
+                    request.app.locals.db.items.create(newItem).then(items =>{
+                        if(items === null){
+                            throw new Error("could not add item")
+                        }
+                        else{
+                            response.send(addSuccessMsg);
+                        }
+                    }).catch(err => {
+                        response.status(400).json({msg: "Cannot add item"});
+                    });
+            }
             }).catch(err => { 
-                response.status(400).json({msg: "Cannot add"});
+                response.status(400).json({msg: "Could not find user"});
             });
         }
     }
@@ -56,16 +66,25 @@ let listAllItems = function(request,response){
     }
     else {
         //Returns all the items for the particular user
-        request.app.locals.db.users.findOne({email: email}, "items").then(items =>{
-            if(items === null){
-                throw new Error("Could not find items");
+        request.app.locals.db.users.findOne({email: email}).then(user =>{
+            if(user === null){
+                throw new Error("Could not find user");
             }
             else{
-                items.msg = "Listing items";
-                response.send(items);
+                request.app.locals.db.items.find({user: user._id}).then(items => {
+                    if (items === null){
+                        throw new Error("Could not find items")
+                    }
+                    else{
+                        items.msg = "Listing items";
+                        response.send(items);
+                    }
+                }).catch(err => {
+                    response.status(400).json({msg: "Could not find items"});
+                })
             }
         }).catch(err =>{
-            response.status(400).json({msg: "Cannot find items"});
+            response.status(400).json({msg: "Cannot find user"});
         })
     }
 }
@@ -81,16 +100,17 @@ let remove = function(request, response) {
     else{
         //Finds the valid email and removes the item from that user
         if (request.body.id && typeof request.body.id === 'string'){
-            console.log(typeof request.body.id);
-            request.app.locals.db.users.findOneAndUpdate({email: email},{$pull: {items: {_id: request.body.id}}}).then(user => {
-                if(user === null) {
-                    throw new Error("Could not find user");
-                }else {
+            //Returns all the items for the particular user
+            request.app.locals.db.items.deleteOne({_id: request.body.id}).then(items => {
+                if (items === null){
+                    throw new Error("Cannot remove")
+                }
+                else{
                     response.send(removeSuccessMsg);
                 }
-            }).catch(err => {   
+            }).catch(err => {
                 response.status(400).json({msg: "Cannot remove"});
-            });
+            })
         }
     }
 };
@@ -105,7 +125,7 @@ let increase = function(request, response){
     }
     // Ensures item id is valid
     if(request.body.id && typeof request.body.id == 'string'){
-        request.app.locals.db.users.findOneAndUpdate({"items._id": request.body.id}, {$inc: {"items.$.quantity": 1}}).then(items => {
+        request.app.locals.db.items.findOneAndUpdate({_id: request.body.id}, {$inc: {quantity: 1}}).then(items => {
             if(items === null) {
                 throw new Error("Could not find items");
             }else {
@@ -128,13 +148,13 @@ let decrease = function(request, response){
     }
     // Ensures item id is valid
     if(request.body.id && typeof request.body.id == 'string'){
-        request.app.locals.db.users.findOne({"items._id": request.body.id}, "items.$").then(items => {
+        request.app.locals.db.items.findOne({_id: request.body.id}).then(items => {
             if(items === null) {
                 throw new Error("Could not find items");
             }else {
                 // Ensures item has at least 2 of the item
-                if (items.items[0].quantity > 1){
-                    request.app.locals.db.users.findOneAndUpdate({"items._id": request.body.id}, {$inc: {"items.$.quantity": -1}}).then(items => {
+                if (items.quantity > 1){
+                    request.app.locals.db.items.findOneAndUpdate({_id: request.body.id}, {$inc: {quantity: -1}}).then(items => {
                         if(items === null) {
                             throw new Error("Could not find items");
                         }else {
@@ -167,14 +187,13 @@ let update = function(request, response){
     if(typeof request.body.quantity === 'number'){
         // updates quantity if new quantity is positive value
         if (request.body.quantity > 0){
-            request.app.locals.db.users.findOneAndUpdate({"items._id": request.body.id}, {"items.$.quantity": request.body.quantity}).then(items => {
+            request.app.locals.db.items.findOneAndUpdate({_id: request.body.id}, {quantity: request.body.quantity}).then(items => {
                 if(items === null) {
                     throw new Error("Could not find items");
                 }else {
                     response.send(updateSuccessMsg);
                 }
             }).catch(err=> {
-                console.log(err);
                 response.status(400).send({msg: "Cannot update quantity"});
             });
         }
