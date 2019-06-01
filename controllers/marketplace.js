@@ -1,11 +1,10 @@
 const mongoose = require('mongoose');
 mongoose.set('useCreateIndex', true);
 const validator = require('./validate.js');
-const ObjectId = mongoose.Types.ObjectId;
 const emailValidate = require('email-validator');
 const marketplace_communicate = require('../models/sendgrid/marketplace_email.js');
 
-let search = function(request, response) {
+let search = async function(request, response) {
     //Searches all the users based on optional parameters on the items location or name
     let queryConditions = {}
     //Finds items nearby a particular location
@@ -22,37 +21,32 @@ let search = function(request, response) {
     if(request.body.name && request.body.name.length > 0){
         queryConditions = {name: request.body.name};
     }
-    console.log(queryConditions)
-    request.app.locals.db.items.find(queryConditions).then(items => {
+    const items = await request.app.locals.db.items.find(queryConditions);
         if(!items === null){
-            throw new Error("Could not find item");
+            response.status(400).json({msg: "Could not find matching items"});
         }
         else{
-            let itemUserInfo = {};
+            var itemUserInfo = {};
             itemUserInfo.msg = "Searched items";
             itemUserInfo.items = items;
             var usernames = [];
-            console.log(items.length);
-            for (let i=0; i < items.length; i++){
-                request.app.locals.db.users.findOne({_id: items[i].user}).then(users => {
+            var i= 0;
+            for (const indivItems of items){
+                request.app.locals.db.users.findOne({_id: indivItems.user}).then(users => {
                     if(users=== null) {
                         response.status(400).json({msg: "Could not find matching users"});
                         return;
                     }else {
-                        usernames[i] = users.name;
-                        console.log(usernames[i], i);
+                        usernames[i] = {name: users.name, email: users.email};
                         if(i == items.length-1){
                             itemUserInfo.users = usernames;
                             response.send(itemUserInfo);
                         }
+                        i++;
                     }
                 });
             }
         }
-    }).catch(err =>{
-            response.status(400).json({msg: "Could not find matching items"});
-            //res.sendStatus(404);
-    });
 };
 
 let email_seller = function(request, response){
@@ -65,10 +59,10 @@ let email_seller = function(request, response){
     }
     else{
         marketplace_communicate(request.body.seller_email, buyer_email).then(success => {
-            console.log(success);
+            
             response.status(200).json({msg: "Contacted requested user"});
         }).catch(err => {
-            console.log(err);
+            
             response.status(400).json({msg: "Could not contact user"});
         }); 
     }

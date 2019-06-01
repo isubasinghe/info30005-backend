@@ -15,7 +15,7 @@ let generate = function(request, response){
     }
     else{
         //Gets the matching user and sorts its items based on items expiring soon, with the max results being limited to 10
-        console.log(email);
+        
         request.app.locals.db.users.findOne({email: email}).then(users => {
             if(users === null) {
                 throw new Error("Could not find user");
@@ -31,7 +31,7 @@ let generate = function(request, response){
                         ingredients+=',';
                     }
                     ingredients = ingredients.slice(0, ingredients.length-1);
-                    console.log(ingredients);
+                    
                     //Uses the Food2Fork API to generate recipes with users list of ingredients expiring soon
                     let url = `http://food2fork.com/api/search?q=${ingredients}&key=${process.env.RECIPE_API_KEY}`;
                     axios.get(url)
@@ -56,7 +56,7 @@ let generate = function(request, response){
         }
         }).catch(err => { 
             response.status(400).json({msg: "Cannot find user"});
-            console.log(err);
+            
         });
     }
 }

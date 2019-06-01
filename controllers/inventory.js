@@ -30,7 +30,7 @@ let add = function(request, response) {
     }
     else{
         // Finds the user which matches the specific email, and adds the new item to their inventory
-        console.log(email);
+       
         if (validator.checkMandatoryItemFields(request, response)){
             request.app.locals.db.users.findOne({email: email}).then(users => {
                 if(users === null) {
@@ -38,7 +38,6 @@ let add = function(request, response) {
                 }else {
                     let newItem = request.body.item;
                     newItem.user = users._id;
-                    console.log(users);
                     request.app.locals.db.items.create(newItem).then(items =>{
                         if(items === null){
                             throw new Error("could not add item")
@@ -47,13 +46,11 @@ let add = function(request, response) {
                             response.send(addSuccessMsg);
                         }
                     }).catch(err => {
-                        console.log(err);
                         response.status(400).json({msg: "Cannot add item"});
                     });
             }
             }).catch(err => { 
                 response.status(400).json({msg: "Could not find user"});
-                console.log(err);
             });
         }
     }
@@ -74,7 +71,6 @@ let listAllItems = function(request,response){
                 throw new Error("Could not find user");
             }
             else{
-                console.log(user._id);
                 request.app.locals.db.items.find({user: user._id}).then(items => {
                     if (items === null){
                         throw new Error("Could not find items")
@@ -104,7 +100,6 @@ let remove = function(request, response) {
     else{
         //Finds the valid email and removes the item from that user
         if (request.body.id && typeof request.body.id === 'string'){
-            console.log(typeof request.body.id);
             //Returns all the items for the particular user
             request.app.locals.db.items.deleteOne({_id: request.body.id}).then(items => {
                 if (items === null){
@@ -199,7 +194,6 @@ let update = function(request, response){
                     response.send(updateSuccessMsg);
                 }
             }).catch(err=> {
-                console.log(err);
                 response.status(400).send({msg: "Cannot update quantity"});
             });
         }
