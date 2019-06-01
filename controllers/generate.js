@@ -41,8 +41,27 @@ let generate = function(request, response){
                         }
                         else{
                             let data = res.data;
-                            data.msg = "Successfully got recipes";
-                            response.send(data);
+                            if(data.recipes.length >0){
+                                data.msg = "Successfully got recipes";
+                                response.send(data);
+                            }
+                            else{
+                                let url = `http://food2fork.com/api/search?q=${ingredients.split(",")[0]}&key=${process.env.RECIPE_API_KEY}`;
+                                axios.get(url)
+                                .then(res => {
+                                    if(res.data.error){
+                                        response.send({recipes: [], msg:"No recipes"});
+                                    }
+                                    else{
+                                        let data = res.data;
+                                        data.msg = "Successfully got recipes";
+                                        response.send(data);
+                                    }
+                                })
+                                .catch(error => {
+                                    response.status(400).json({msg: "Could not find recipes"});
+                                });
+                            }
                         }
                     })
                     .catch(error => {
